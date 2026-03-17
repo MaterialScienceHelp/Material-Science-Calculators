@@ -53,12 +53,12 @@
 
         <div id="theory-at-wt" class="theory-block" style="display:none;">
           <h2>Atomic % to Weight %</h2>
-          <p>Select two elements from the table. Enter atomic % of element 1.</p>
+          <p>Select two elements from the periodic table. Enter atomic % of element 1.</p>
         </div>
 
         <div id="theory-wt-at" class="theory-block" style="display:none;">
           <h2>Weight % to Atomic %</h2>
-          <p>Select two elements from the table. Enter weight % of element 1.</p>
+          <p>Select two elements from the periodic table. Enter weight % of element 1.</p>
         </div>
 
         <div id="theory-density" class="theory-block" style="display:none;">
@@ -105,7 +105,7 @@
           <button class="reset-btn" id="reset-selection-btn">Reset Selection</button>
         </div>
 
-        <div class="legend" style="margin-top:10px; margin-bottom:10px;">
+        <div class="legend">
           <span><i style="background:var(--transition)"></i>Transition</span>
           <span><i style="background:var(--alkali)"></i>Alkali</span>
           <span><i style="background:var(--alkaline)"></i>Alkaline Earth</span>
@@ -117,9 +117,9 @@
           <span><i style="background:var(--actinide)"></i>Actinide</span>
         </div>
 
-        <div style="overflow-x:auto; padding-bottom:20px;">
-  	  <div id="periodic-table"></div>
-	</div>
+        <div class="table-scroll">
+          <div id="table" class="periodic-table"></div>
+        </div>
       </section>
 
       <section id="view-hume" class="calc-view active">
@@ -188,6 +188,7 @@
           <button class="primary-btn" id="hall-btn">Calculate Yield Strength</button>
           <div id="hp-result" class="calc-result"></div>
         </div>
+
         <div class="chart-card" style="max-width:900px;">
           <canvas id="hall-chart" width="820" height="320"></canvas>
           <div class="mini-note">Chart shows Hall-Petch trend with the selected point highlighted.</div>
@@ -203,6 +204,7 @@
           <button class="primary-btn" id="atwt-btn">Convert to Weight %</button>
           <div id="atwt-result" class="calc-result"></div>
         </div>
+
         <div class="formula-grid three" id="atwt-extra" style="display:none; max-width:900px;">
           <div class="metric-card"><div class="metric-title">Average atomic weight</div><div class="metric-value" id="atwt-aaw">—</div></div>
           <div class="metric-card"><div class="metric-title">Mole fraction of element 1</div><div class="metric-value accent-purple" id="atwt-mole">—</div></div>
@@ -219,6 +221,7 @@
           <button class="primary-btn" id="wtat-btn">Convert to Atomic %</button>
           <div id="wtat-result" class="calc-result"></div>
         </div>
+
         <div class="formula-grid three" id="wtat-extra" style="display:none; max-width:900px;">
           <div class="metric-card"><div class="metric-title">Average atomic weight</div><div class="metric-value" id="wtat-aaw">—</div></div>
           <div class="metric-card"><div class="metric-title">Mole fraction of element 1</div><div class="metric-value accent-purple" id="wtat-mole">—</div></div>
@@ -277,14 +280,17 @@
             <div class="input-group"><label for="ternary-e2">Element 2</label><select id="ternary-e2"></select></div>
             <div class="input-group"><label for="ternary-e3">Element 3</label><select id="ternary-e3"></select></div>
           </div>
+
           <div class="triple-inputs">
             <div class="input-group"><label for="ternary-c1">At% Element 1</label><input type="number" id="ternary-c1" value="33.33" step="any" /></div>
             <div class="input-group"><label for="ternary-c2">At% Element 2</label><input type="number" id="ternary-c2" value="33.33" step="any" /></div>
             <div class="input-group"><label for="ternary-c3">At% Element 3</label><input type="number" id="ternary-c3" value="33.34" step="any" /></div>
           </div>
+
           <button class="primary-btn" id="ternary-btn">Calculate Ternary Descriptors</button>
           <div id="ternary-result" class="calc-result"></div>
         </div>
+
         <div class="triple-grid three" id="ternary-extra" style="display:none; max-width:900px;">
           <div class="metric-card"><div class="metric-title">Average atomic weight</div><div class="metric-value" id="ternary-aaw">—</div></div>
           <div class="metric-card"><div class="metric-title">Average VEC</div><div class="metric-value accent-purple" id="ternary-vec">—</div></div>
