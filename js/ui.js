@@ -40,7 +40,7 @@ function showInlineMessage(message, type = "success") {
 }
 
 function resetResultsOnly() {
-  ["summary", "temp-note", "hp-result", "atwt-result", "wtat-result", "density-result", "diff-result", "ternary-result"].forEach(id => {
+  ["summary", "hp-result", "atwt-result", "wtat-result", "density-result", "diff-result", "ternary-result"].forEach(id => {
     const node = document.getElementById(id);
     if (node) {
       node.style.display = "none";
@@ -57,19 +57,23 @@ function resetResultsOnly() {
 
   ["rule1", "rule2", "rule3", "rule4"].forEach((id, idx) => {
     const node = document.getElementById(id);
-    node.innerHTML = `Rule ${idx + 1}: Select two elements.`;
-    node.style.borderLeftColor = "#cbd5e1";
+    if (node) {
+      node.innerHTML = `Rule ${idx + 1}: Select two elements.`;
+      node.style.borderLeftColor = "#cbd5e1";
+    }
   });
 
-  document.getElementById("phase-tendency").innerHTML = "Phase tendency will appear here.";
-  document.getElementById("strength-tendency").innerHTML = "Strengthening trend will appear here.";
+  const phase = document.getElementById("phase-tendency");
+  const strength = document.getElementById("strength-tendency");
+  if (phase) phase.innerHTML = "Phase tendency will appear here.";
+  if (strength) strength.innerHTML = "Strengthening trend will appear here.";
 }
 
 function resetTable() {
   solvent = null;
   solute = null;
 
-  ["at-val", "wt-val", "density-rho1", "density-rho2", "temp-input"].forEach(id => {
+  ["at-val", "wt-val", "density-rho1", "density-rho2"].forEach(id => {
     const node = document.getElementById(id);
     if (node) node.value = "";
   });
@@ -146,7 +150,6 @@ function populateTernarySelects() {
   ["ternary-e1", "ternary-e2", "ternary-e3"].forEach((id, idx) => {
     const select = document.getElementById(id);
     if (!select) return;
-
     select.innerHTML = elementsData.map(el => `<option value="${el.s}">${el.s}</option>`).join("");
     select.value = defaults[idx];
   });
