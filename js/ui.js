@@ -5,9 +5,25 @@ function updateBadges() {
   const soluteBadge = document.getElementById("solute-badge");
   const explorerBadge = document.getElementById("explorer-badge");
 
-  if (solventBadge) solventBadge.textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
-  if (soluteBadge) soluteBadge.textContent = `Solute: ${solute ? solute.s : "—"}`;
-  if (explorerBadge) explorerBadge.textContent = `Explorer: ${explorerElement ? explorerElement.s : "—"}`;
+  if (solventBadge) {
+    if (currentMode === "at-wt" || currentMode === "wt-at" || currentMode === "density") {
+      solventBadge.textContent = `Element 1: ${solvent ? solvent.s : "—"}`;
+    } else {
+      solventBadge.textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
+    }
+  }
+
+  if (soluteBadge) {
+    if (currentMode === "at-wt" || currentMode === "wt-at" || currentMode === "density") {
+      soluteBadge.textContent = `Element 2: ${solute ? solute.s : "—"}`;
+    } else {
+      soluteBadge.textContent = `Solute: ${solute ? solute.s : "—"}`;
+    }
+  }
+
+  if (explorerBadge) {
+    explorerBadge.textContent = `Explorer: ${explorerElement ? explorerElement.s : "—"}`;
+  }
 }
 
 function updateCompositionLabels() {
@@ -27,12 +43,8 @@ function syncSelectionStyles() {
         node.classList.add("solvent");
       }
     } else {
-      if (solvent && node.dataset.symbol === solvent.s) {
-        node.classList.add("solvent");
-      }
-      if (solute && node.dataset.symbol === solute.s) {
-        node.classList.add("solute");
-      }
+      if (solvent && node.dataset.symbol === solvent.s) node.classList.add("solvent");
+      if (solute && node.dataset.symbol === solute.s) node.classList.add("solute");
     }
   });
 }
@@ -102,7 +114,6 @@ function resetResultsOnly() {
 
   const phase = document.getElementById("phase-tendency");
   const strength = document.getElementById("strength-tendency");
-
   if (phase) phase.innerHTML = "Phase tendency will appear here.";
   if (strength) strength.innerHTML = "Strengthening trend will appear here.";
 }
@@ -141,9 +152,7 @@ function resetTable() {
   resetResultsOnly();
   resetExplorerPanel();
 
-  if (typeof drawHallChart === "function") {
-    drawHallChart();
-  }
+  if (typeof drawHallChart === "function") drawHallChart();
 }
 
 function selectElement(el) {
@@ -151,9 +160,7 @@ function selectElement(el) {
     explorerElement = el;
     updateBadges();
     syncSelectionStyles();
-    if (typeof showElementExplorer === "function") {
-      showElementExplorer(el);
-    }
+    if (typeof showElementExplorer === "function") showElementExplorer(el);
     return;
   }
 
@@ -223,11 +230,9 @@ function buildTable() {
 
 function populateTernarySelects() {
   const defaults = ["Al", "Si", "Mg"];
-
   ["ternary-e1", "ternary-e2", "ternary-e3"].forEach((id, idx) => {
     const select = document.getElementById(id);
     if (!select) return;
-
     select.innerHTML = elementsData.map(el => `<option value="${el.s}">${el.s}</option>`).join("");
     select.value = defaults[idx];
   });
@@ -238,9 +243,7 @@ function showCalc(mode) {
 
   document.querySelectorAll(".calc-view").forEach(el => el.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".theory-block").forEach(el => {
-    el.style.display = "none";
-  });
+  document.querySelectorAll(".theory-block").forEach(el => { el.style.display = "none"; });
 
   const targetView = document.getElementById(`view-${mode}`);
   const targetBtn = document.getElementById(`btn-${mode}`);
@@ -252,13 +255,9 @@ function showCalc(mode) {
 
   const periodicContainer = document.getElementById("periodic-container");
   const hideTable = ["hall", "diffusion", "ternary", "structures"].includes(mode);
-  if (periodicContainer) {
-    periodicContainer.style.display = hideTable ? "none" : "block";
-  }
+  if (periodicContainer) periodicContainer.style.display = hideTable ? "none" : "block";
 
-  if (mode === "hall" && typeof drawHallChart === "function") {
-    drawHallChart();
-  }
+  if (mode === "hall" && typeof drawHallChart === "function") drawHallChart();
 
   updateBadges();
   syncSelectionStyles();
