@@ -1,3 +1,5 @@
+let explorerElement = null;
+
 function updateBadges() {
   const solventBadge = document.getElementById("solvent-badge");
   const soluteBadge = document.getElementById("solute-badge");
@@ -5,13 +7,7 @@ function updateBadges() {
 
   if (solventBadge) solventBadge.textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
   if (soluteBadge) soluteBadge.textContent = `Solute: ${solute ? solute.s : "—"}`;
-  if (explorerBadge) {
-    if (currentMode === "explorer" && solvent) {
-      explorerBadge.textContent = `Explorer: ${solvent.s}`;
-    } else {
-      explorerBadge.textContent = "Explorer: —";
-    }
-  }
+  if (explorerBadge) explorerBadge.textContent = `Explorer: ${explorerElement ? explorerElement.s : "—"}`;
 }
 
 function updateCompositionLabels() {
@@ -26,12 +22,17 @@ function syncSelectionStyles() {
   document.querySelectorAll(".element").forEach(node => {
     node.classList.remove("solvent", "solute");
 
-    if (solvent && node.dataset.symbol === solvent.s) {
-      node.classList.add("solvent");
-    }
-
-    if (solute && node.dataset.symbol === solute.s && currentMode !== "explorer") {
-      node.classList.add("solute");
+    if (currentMode === "explorer") {
+      if (explorerElement && node.dataset.symbol === explorerElement.s) {
+        node.classList.add("solvent");
+      }
+    } else {
+      if (solvent && node.dataset.symbol === solvent.s) {
+        node.classList.add("solvent");
+      }
+      if (solute && node.dataset.symbol === solute.s) {
+        node.classList.add("solute");
+      }
     }
   });
 }
@@ -39,7 +40,6 @@ function syncSelectionStyles() {
 function setRuleCard(id, html, pass) {
   const node = document.getElementById(id);
   if (!node) return;
-
   node.innerHTML = html;
   node.style.borderLeftColor = pass ? "var(--success)" : "var(--danger)";
 }
@@ -125,6 +125,7 @@ function resetExplorerPanel() {
 function resetTable() {
   solvent = null;
   solute = null;
+  explorerElement = null;
 
   ["at-val", "wt-val", "density-rho1", "density-rho2"].forEach(id => {
     const node = document.getElementById(id);
@@ -147,12 +148,12 @@ function resetTable() {
 
 function selectElement(el) {
   if (currentMode === "explorer") {
-    solvent = el;
-    solute = null;
-    syncSelectionStyles();
+    explorerElement = el;
     updateBadges();
-    updateCompositionLabels();
-    showElementExplorer(el);
+    syncSelectionStyles();
+    if (typeof showElementExplorer === "function") {
+      showElementExplorer(el);
+    }
     return;
   }
 
@@ -167,9 +168,9 @@ function selectElement(el) {
     solute = el;
   }
 
-  syncSelectionStyles();
   updateBadges();
   updateCompositionLabels();
+  syncSelectionStyles();
   resetResultsOnly();
 
   if (currentMode === "hume" && solvent && solute) {
@@ -259,7 +260,6 @@ function showCalc(mode) {
     drawHallChart();
   }
 
-  if (mode !== "explorer") {
-    updateBadges();
-  }
+  updateBadges();
+  syncSelectionStyles();
 }
