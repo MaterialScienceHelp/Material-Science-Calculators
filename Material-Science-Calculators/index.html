@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Material Science Calculators | Hume-Rothery, Hall-Petch, Diffusion Tools</title>
+  <meta name="description" content="Free material science calculators for Hume-Rothery rules, Hall-Petch strengthening, atomic percent to weight percent conversion, diffusion, density, and ternary alloy analysis.">
+  <meta name="keywords" content="Hume Rothery calculator, Hall Petch calculator, material science calculator, alloy solubility tool, diffusion calculator, ternary alloy calculator, engineering materials">
+  <meta name="author" content="Ravi">
+  <meta name="robots" content="index, follow">
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="nav-tabs">
+    <button id="btn-hume" class="tab-btn active" data-mode="hume">Hume-Rothery</button>
+    <button id="btn-hall" class="tab-btn" data-mode="hall">Hall-Petch</button>
+    <button id="btn-at-wt" class="tab-btn" data-mode="at-wt">At% → Wt%</button>
+    <button id="btn-wt-at" class="tab-btn" data-mode="wt-at">Wt% → At%</button>
+    <button id="btn-density" class="tab-btn" data-mode="density">Density</button>
+    <button id="btn-diffusion" class="tab-btn" data-mode="diffusion">Diffusion</button>
+    <button id="btn-ternary" class="tab-btn" data-mode="ternary">Ternary Alloy</button>
+    <button id="btn-structures" class="tab-btn" data-mode="structures">Crystal Structures</button>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-scroll">
+        <div id="theory-hume" class="theory-block">
+          <h2>Hume-Rothery Rules</h2>
+          <p>Use this tool to estimate how well one element can dissolve substitutionally in another.</p>
+          <h3>1. Atomic Size Factor</h3>
+          <p>The atomic radius difference should ideally be below <b>15%</b>.</p>
+          <div class="math-block">Diff = |(r_solute - r_solvent) / r_solvent| × 100</div>
+          <h3>2. Crystal Structure</h3>
+          <p>Same crystal structure improves the chance of extensive solid solubility.</p>
+          <h3>3. Electronegativity</h3>
+          <p>Large electronegativity differences increase intermetallic tendency.</p>
+          <h3>4. Relative Valency</h3>
+          <p>Elements with the same or compatible valency often dissolve more easily.</p>
+          <div class="info-box" style="margin-top:14px;">
+            <b>How to use:</b><br>
+            First click selects the solvent. Second click selects the solute.
+          </div>
+        </div>
+
+        <div id="theory-hall" class="theory-block" style="display:none;">
+          <h2>Hall-Petch Law</h2>
+          <p>Predict yield strength as grain size decreases.</p>
+          <div class="math-block">σy = σ0 + ky / √d</div>
+        </div>
+
+        <div id="theory-at-wt" class="theory-block" style="display:none;">
+          <h2>Atomic % to Weight %</h2>
+          <p>Select two elements from the table. Enter atomic % of element 1.</p>
+        </div>
+
+        <div id="theory-wt-at" class="theory-block" style="display:none;">
+          <h2>Weight % to Atomic %</h2>
+          <p>Select two elements from the table. Enter weight % of element 1.</p>
+        </div>
+
+        <div id="theory-density" class="theory-block" style="display:none;">
+          <h2>Rule of Mixtures Density</h2>
+          <p>Estimate binary alloy density using a simple inverse-mixture relation.</p>
+          <div class="math-block">1 / ρmix = w1 / ρ1 + w2 / ρ2</div>
+        </div>
+
+        <div id="theory-diffusion" class="theory-block" style="display:none;">
+          <h2>Diffusion / Arrhenius Module</h2>
+          <p>Estimate diffusion coefficient using the Arrhenius relation.</p>
+          <div class="math-block">D = D₀ exp(-Q / RT)</div>
+        </div>
+
+        <div id="theory-ternary" class="theory-block" style="display:none;">
+          <h2>Ternary Alloy Toolkit</h2>
+          <p>Choose three elements and convert ternary at% to wt%, calculate average atomic weight, VEC, and size-misfit parameter.</p>
+        </div>
+
+        <div id="theory-structures" class="theory-block" style="display:none;">
+          <h2>Crystal Structure Reference</h2>
+          <p>Educational panel for FCC, BCC, and HCP with packing factor, coordination number, and quick learning notes.</p>
+        </div>
+      </div>
+
+      <div class="yt-promo">
+        <p><b>Learn the topic in depth</b></p>
+        <a href="https://www.youtube.com/@universeofphysicsbyravi" target="_blank" class="yt-btn">▶ Universe of Physics by Ravi</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="periodic-container">
+        <div class="hero">
+          <h1>Material Science Calculators</h1>
+          <p>Free tools for alloy design, diffusion, strengthening, and material analysis.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="selection-badges">
+            <div class="badge solvent" id="solvent-badge">Solvent: —</div>
+            <div class="badge solute" id="solute-badge">Solute: —</div>
+          </div>
+          <button class="reset-btn" id="reset-selection-btn">Reset Selection</button>
+        </div>
+
+        <div class="legend" style="margin-top:10px; margin-bottom:10px;">
+          <span><i style="background:var(--transition)"></i>Transition</span>
+          <span><i style="background:var(--alkali)"></i>Alkali</span>
+          <span><i style="background:var(--alkaline)"></i>Alkaline Earth</span>
+          <span><i style="background:var(--post-trans)"></i>Post-transition</span>
+          <span><i style="background:var(--metalloid)"></i>Metalloid</span>
+          <span><i style="background:var(--nonmetal)"></i>Nonmetal</span>
+          <span><i style="background:var(--noble)"></i>Noble gas</span>
+          <span><i style="background:var(--lanthanide)"></i>Lanthanide</span>
+          <span><i style="background:var(--actinide)"></i>Actinide</span>
+        </div>
+
+        <div id="table" class="periodic-table"></div>
+      </section>
+
+      <section id="view-hume" class="calc-view active">
+        <div class="panel-card" style="max-width:900px;">
+          <div class="input-row">
+            <div class="input-group">
+              <label for="temp-input">Temperature for phase note [°C]</label>
+              <input type="number" id="temp-input" placeholder="Optional, e.g. 25 or 950" step="any" />
+            </div>
+            <div class="input-group">
+              <label>Selected Pair Insight</label>
+              <div class="info-box">The tool reports phase tendency, size-severity band, VEC, lattice distortion, and qualitative strengthening.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pair-meta" id="pair-meta" style="display:none;">
+          <div class="meta-card" id="solvent-meta"></div>
+          <div class="meta-card" id="solute-meta"></div>
+        </div>
+
+        <div class="metrics-grid three" id="hume-metrics" style="display:none; max-width:900px;">
+          <div class="metric-card">
+            <div class="metric-title">Size mismatch</div>
+            <div class="metric-value" id="metric-mismatch">—</div>
+            <div id="metric-severity"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Average VEC</div>
+            <div class="metric-value accent-purple" id="metric-vec">—</div>
+            <div class="mini-note">Average valence electron concentration</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Lattice distortion δ</div>
+            <div class="metric-value accent-teal" id="metric-delta">—</div>
+            <div class="mini-note">Approximate size-misfit descriptor</div>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <div id="rule1" class="rule-card">Rule 1: Select two elements.</div>
+          <div id="rule2" class="rule-card">Rule 2: Select two elements.</div>
+          <div id="rule3" class="rule-card">Rule 3: Select two elements.</div>
+          <div id="rule4" class="rule-card">Rule 4: Select two elements.</div>
+          <div id="phase-tendency" class="phase-card">Phase tendency will appear here.</div>
+          <div id="strength-tendency" class="phase-card">Strengthening trend will appear here.</div>
+          <div id="temp-note" class="summary-card" style="display:none;">Temperature note</div>
+          <div id="summary" class="summary-card">Summary</div>
+        </div>
+      </section>
+
+      <section id="view-hall" class="calc-view">
+        <div class="hp-card narrow">
+          <div class="input-group">
+            <label for="hp-sigma">σ0 (friction stress) [MPa]</label>
+            <input type="number" id="hp-sigma" value="70" step="any" />
+          </div>
+          <div class="input-group">
+            <label for="hp-k">ky</label>
+            <input type="number" id="hp-k" value="0.74" step="any" />
+          </div>
+          <div class="input-group">
+            <label for="hp-d">d (grain size) [μm]</label>
+            <input type="number" id="hp-d" placeholder="Enter grain size" step="any" />
+          </div>
+          <button class="primary-btn" id="hall-btn">Calculate Yield Strength</button>
+          <div id="hp-result" class="calc-result"></div>
+        </div>
+        <div class="chart-card" style="max-width:900px;">
+          <canvas id="hall-chart" width="820" height="320"></canvas>
+          <div class="mini-note">Chart shows Hall-Petch trend with the selected point highlighted.</div>
+        </div>
+      </section>
+
+      <section id="view-at-wt" class="calc-view">
+        <div class="hp-card narrow">
+          <div class="input-group">
+            <label id="at-label">Atomic % of Element 1</label>
+            <input type="number" id="at-val" min="0" max="100" placeholder="Enter atomic %" step="any" />
+          </div>
+          <button class="primary-btn" id="atwt-btn">Convert to Weight %</button>
+          <div id="atwt-result" class="calc-result"></div>
+        </div>
+        <div class="formula-grid three" id="atwt-extra" style="display:none; max-width:900px;">
+          <div class="metric-card"><div class="metric-title">Average atomic weight</div><div class="metric-value" id="atwt-aaw">—</div></div>
+          <div class="metric-card"><div class="metric-title">Mole fraction of element 1</div><div class="metric-value accent-purple" id="atwt-mole">—</div></div>
+          <div class="metric-card"><div class="metric-title">Mass fraction of element 1</div><div class="metric-value accent-teal" id="atwt-mass">—</div></div>
+        </div>
+      </section>
+
+      <section id="view-wt-at" class="calc-view">
+        <div class="hp-card narrow">
+          <div class="input-group">
+            <label id="wt-label">Weight % of Element 1</label>
+            <input type="number" id="wt-val" min="0" max="100" placeholder="Enter weight %" step="any" />
+          </div>
+          <button class="primary-btn" id="wtat-btn">Convert to Atomic %</button>
+          <div id="wtat-result" class="calc-result"></div>
+        </div>
+        <div class="formula-grid three" id="wtat-extra" style="display:none; max-width:900px;">
+          <div class="metric-card"><div class="metric-title">Average atomic weight</div><div class="metric-value" id="wtat-aaw">—</div></div>
+          <div class="metric-card"><div class="metric-title">Mole fraction of element 1</div><div class="metric-value accent-purple" id="wtat-mole">—</div></div>
+          <div class="metric-card"><div class="metric-title">Mass fraction of element 1</div><div class="metric-value accent-teal" id="wtat-mass">—</div></div>
+        </div>
+      </section>
+
+      <section id="view-density" class="calc-view">
+        <div class="panel-card">
+          <div class="input-row">
+            <div class="input-group">
+              <label for="density-c1">Weight % of solvent element</label>
+              <input type="number" id="density-c1" min="0" max="100" value="50" step="any" />
+            </div>
+            <div class="input-group">
+              <label for="density-rho1">Density of solvent [g/cm³]</label>
+              <input type="number" id="density-rho1" placeholder="e.g. 2.70" step="any" />
+            </div>
+            <div class="input-group">
+              <label for="density-rho2">Density of solute [g/cm³]</label>
+              <input type="number" id="density-rho2" placeholder="e.g. 7.87" step="any" />
+            </div>
+            <div class="input-group">
+              <label>Binary pair requirement</label>
+              <div class="info-box">Select two elements from the periodic table, then enter densities and composition.</div>
+            </div>
+          </div>
+          <button class="primary-btn" id="density-btn">Calculate Alloy Density</button>
+          <div id="density-result" class="calc-result"></div>
+        </div>
+      </section>
+
+      <section id="view-diffusion" class="calc-view">
+        <div class="panel-card narrow">
+          <div class="input-group">
+            <label for="diff-d0">D₀ [m²/s]</label>
+            <input type="number" id="diff-d0" placeholder="e.g. 1e-5" step="any" />
+          </div>
+          <div class="input-group">
+            <label for="diff-q">Activation energy Q [J/mol]</label>
+            <input type="number" id="diff-q" placeholder="e.g. 140000" step="any" />
+          </div>
+          <div class="input-group">
+            <label for="diff-t">Temperature T [K]</label>
+            <input type="number" id="diff-t" placeholder="e.g. 800" step="any" />
+          </div>
+          <button class="primary-btn" id="diffusion-btn">Calculate Diffusion Coefficient</button>
+          <div id="diff-result" class="calc-result"></div>
+        </div>
+      </section>
+
+      <section id="view-ternary" class="calc-view">
+        <div class="panel-card">
+          <div class="triple-inputs">
+            <div class="input-group"><label for="ternary-e1">Element 1</label><select id="ternary-e1"></select></div>
+            <div class="input-group"><label for="ternary-e2">Element 2</label><select id="ternary-e2"></select></div>
+            <div class="input-group"><label for="ternary-e3">Element 3</label><select id="ternary-e3"></select></div>
+          </div>
+          <div class="triple-inputs">
+            <div class="input-group"><label for="ternary-c1">At% Element 1</label><input type="number" id="ternary-c1" value="33.33" step="any" /></div>
+            <div class="input-group"><label for="ternary-c2">At% Element 2</label><input type="number" id="ternary-c2" value="33.33" step="any" /></div>
+            <div class="input-group"><label for="ternary-c3">At% Element 3</label><input type="number" id="ternary-c3" value="33.34" step="any" /></div>
+          </div>
+          <button class="primary-btn" id="ternary-btn">Calculate Ternary Descriptors</button>
+          <div id="ternary-result" class="calc-result"></div>
+        </div>
+        <div class="triple-grid three" id="ternary-extra" style="display:none; max-width:900px;">
+          <div class="metric-card"><div class="metric-title">Average atomic weight</div><div class="metric-value" id="ternary-aaw">—</div></div>
+          <div class="metric-card"><div class="metric-title">Average VEC</div><div class="metric-value accent-purple" id="ternary-vec">—</div></div>
+          <div class="metric-card"><div class="metric-title">δ size misfit</div><div class="metric-value accent-teal" id="ternary-delta">—</div></div>
+        </div>
+      </section>
+
+      <section id="view-structures" class="calc-view">
+        <div class="structure-grid">
+          <div class="structure-card"><b>FCC</b><br><br>Coordination number: 12<br>Atomic packing factor: 0.74<br>Slip systems: high<br>Common traits: ductile, close-packed, strong formability.<div class="mini-note">Examples: Al, Cu, Ni, Ag, Au, Pt.</div></div>
+          <div class="structure-card"><b>BCC</b><br><br>Coordination number: 8<br>Atomic packing factor: 0.68<br>Slip tendency: moderate to temperature-sensitive<br>Common traits: stronger, lower packing, often less ductile at low T.<div class="mini-note">Examples: Fe(α), Cr, Mo, W, Nb.</div></div>
+          <div class="structure-card"><b>HCP</b><br><br>Coordination number: 12<br>Atomic packing factor: 0.74<br>Slip systems: limited at room temperature<br>Common traits: anisotropy, lower room-temperature ductility than FCC.<div class="mini-note">Examples: Mg, Ti, Zn, Co, Zr.</div></div>
+          <div class="structure-card"><b>Temperature-sensitive phase notes</b><br><br>Fe: BCC at room T, FCC at elevated T.<br>Ti: HCP at room T, BCC at elevated T.<br>Co: HCP at lower T, FCC at higher T.<div class="mini-note">Use the Hume-Rothery temperature box for quick phase reminders.</div></div>
+        </div>
+      </section>
+
+      <section class="seo-content">
+        <h2>What is the Hume-Rothery Rule?</h2>
+        <p>
+          Hume-Rothery rules help predict whether two metals can form a substitutional solid solution.
+          The most important checks are atomic size difference, crystal structure similarity,
+          electronegativity difference, and valency compatibility.
+        </p>
+
+        <h2>Why is this calculator useful?</h2>
+        <p>
+          This tool helps students, researchers, and engineers quickly estimate alloy compatibility,
+          compare phase tendency, study Hall-Petch strengthening, convert atomic percent to weight percent,
+          and explore diffusion and ternary alloy descriptors.
+        </p>
+
+        <h2>Who should use this?</h2>
+        <p>
+          This website is useful for material science students, metallurgy learners, alloy design researchers,
+          and engineers working on phase selection, strengthening behavior, and composition calculations.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/calculators/hume.js"></script>
+  <script src="js/calculators/hallpetch.js"></script>
+  <script src="js/calculators/atwt.js"></script>
+  <script src="js/calculators/wtat.js"></script>
+  <script src="js/calculators/density.js"></script>
+  <script src="js/calculators/diffusion.js"></script>
+  <script src="js/calculators/ternary.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
