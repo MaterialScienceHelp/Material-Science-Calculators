@@ -1,35 +1,50 @@
 function updateBadges() {
-  document.getElementById("solvent-badge").textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
-  document.getElementById("solute-badge").textContent = `Solute: ${solute ? solute.s : "—"}`;
+  const solventBadge = document.getElementById("solvent-badge");
+  const soluteBadge = document.getElementById("solute-badge");
+
+  if (solventBadge) solventBadge.textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
+  if (soluteBadge) soluteBadge.textContent = `Solute: ${solute ? solute.s : "—"}`;
 }
 
 function updateCompositionLabels() {
-  document.getElementById("at-label").textContent = solvent ? `Atomic % of ${solvent.s}` : "Atomic % of Element 1";
-  document.getElementById("wt-label").textContent = solvent ? `Weight % of ${solvent.s}` : "Weight % of Element 1";
+  const atLabel = document.getElementById("at-label");
+  const wtLabel = document.getElementById("wt-label");
+
+  if (atLabel) atLabel.textContent = solvent ? `Atomic % of ${solvent.s}` : "Atomic % of Element 1";
+  if (wtLabel) wtLabel.textContent = solvent ? `Weight % of ${solvent.s}` : "Weight % of Element 1";
 }
 
 function syncSelectionStyles() {
   document.querySelectorAll(".element").forEach(node => {
     node.classList.remove("solvent", "solute");
-    if (solvent && node.dataset.symbol === solvent.s) node.classList.add("solvent");
-    if (solute && node.dataset.symbol === solute.s) node.classList.add("solute");
+
+    if (solvent && node.dataset.symbol === solvent.s) {
+      node.classList.add("solvent");
+    }
+
+    if (solute && node.dataset.symbol === solute.s) {
+      node.classList.add("solute");
+    }
   });
 }
 
 function setRuleCard(id, html, pass) {
   const node = document.getElementById(id);
+  if (!node) return;
+
   node.innerHTML = html;
   node.style.borderLeftColor = pass ? "var(--success)" : "var(--danger)";
 }
 
 function showInlineMessage(message, type = "success") {
-  const targetId = currentMode === "at-wt"
-    ? "atwt-result"
-    : currentMode === "wt-at"
-    ? "wtat-result"
-    : currentMode === "density"
-    ? "density-result"
-    : "summary";
+  const targetId =
+    currentMode === "at-wt"
+      ? "atwt-result"
+      : currentMode === "wt-at"
+      ? "wtat-result"
+      : currentMode === "density"
+      ? "density-result"
+      : "summary";
 
   const node = document.getElementById(targetId);
   if (!node) return;
@@ -40,7 +55,15 @@ function showInlineMessage(message, type = "success") {
 }
 
 function resetResultsOnly() {
-  ["summary", "hp-result", "atwt-result", "wtat-result", "density-result", "diff-result", "ternary-result"].forEach(id => {
+  [
+    "summary",
+    "hp-result",
+    "atwt-result",
+    "wtat-result",
+    "density-result",
+    "diff-result",
+    "ternary-result"
+  ].forEach(id => {
     const node = document.getElementById(id);
     if (node) {
       node.style.display = "none";
@@ -49,11 +72,17 @@ function resetResultsOnly() {
     }
   });
 
-  document.getElementById("pair-meta").style.display = "none";
-  document.getElementById("hume-metrics").style.display = "none";
-  document.getElementById("atwt-extra").style.display = "none";
-  document.getElementById("wtat-extra").style.display = "none";
-  document.getElementById("ternary-extra").style.display = "none";
+  const pairMeta = document.getElementById("pair-meta");
+  const humeMetrics = document.getElementById("hume-metrics");
+  const atwtExtra = document.getElementById("atwt-extra");
+  const wtatExtra = document.getElementById("wtat-extra");
+  const ternaryExtra = document.getElementById("ternary-extra");
+
+  if (pairMeta) pairMeta.style.display = "none";
+  if (humeMetrics) humeMetrics.style.display = "none";
+  if (atwtExtra) atwtExtra.style.display = "none";
+  if (wtatExtra) wtatExtra.style.display = "none";
+  if (ternaryExtra) ternaryExtra.style.display = "none";
 
   ["rule1", "rule2", "rule3", "rule4"].forEach((id, idx) => {
     const node = document.getElementById(id);
@@ -65,6 +94,7 @@ function resetResultsOnly() {
 
   const phase = document.getElementById("phase-tendency");
   const strength = document.getElementById("strength-tendency");
+
   if (phase) phase.innerHTML = "Phase tendency will appear here.";
   if (strength) strength.innerHTML = "Strengthening trend will appear here.";
 }
@@ -85,7 +115,10 @@ function resetTable() {
   updateCompositionLabels();
   syncSelectionStyles();
   resetResultsOnly();
-  drawHallChart();
+
+  if (typeof drawHallChart === "function") {
+    drawHallChart();
+  }
 }
 
 function selectElement(el) {
@@ -105,8 +138,13 @@ function selectElement(el) {
   updateCompositionLabels();
   resetResultsOnly();
 
-  if (currentMode === "hume" && solvent && solute && typeof calculateHume === "function") {
-    calculateHume();
+  if (currentMode === "hume" && solvent && solute) {
+    try {
+      calculateHume();
+    } catch (err) {
+      console.error("Hume-Rothery calculation error:", err);
+      showInlineMessage("There was an issue running the Hume-Rothery calculation. Check console.", "warning");
+    }
   }
 
   if (["at-wt", "wt-at", "density"].includes(currentMode) && solvent && solute) {
@@ -116,12 +154,15 @@ function selectElement(el) {
 
 function buildTable() {
   const table = document.getElementById("table");
+  if (!table) return;
+
   table.innerHTML = "";
 
   for (let row = 1; row <= 9; row++) {
     for (let col = 1; col <= 18; col++) {
       const el = elementsData.find(e => e.r === row && e.c === col);
       const div = document.createElement("div");
+
       div.style.gridColumn = col;
       div.style.gridRow = row;
 
@@ -147,9 +188,11 @@ function buildTable() {
 
 function populateTernarySelects() {
   const defaults = ["Al", "Si", "Mg"];
+
   ["ternary-e1", "ternary-e2", "ternary-e3"].forEach((id, idx) => {
     const select = document.getElementById(id);
     if (!select) return;
+
     select.innerHTML = elementsData.map(el => `<option value="${el.s}">${el.s}</option>`).join("");
     select.value = defaults[idx];
   });
@@ -160,14 +203,25 @@ function showCalc(mode) {
 
   document.querySelectorAll(".calc-view").forEach(el => el.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".theory-block").forEach(el => el.style.display = "none");
+  document.querySelectorAll(".theory-block").forEach(el => {
+    el.style.display = "none";
+  });
 
-  document.getElementById(`view-${mode}`).classList.add("active");
-  document.getElementById(`btn-${mode}`).classList.add("active");
-  document.getElementById(`theory-${mode}`).style.display = "block";
+  const targetView = document.getElementById(`view-${mode}`);
+  const targetBtn = document.getElementById(`btn-${mode}`);
+  const targetTheory = document.getElementById(`theory-${mode}`);
 
+  if (targetView) targetView.classList.add("active");
+  if (targetBtn) targetBtn.classList.add("active");
+  if (targetTheory) targetTheory.style.display = "block";
+
+  const periodicContainer = document.getElementById("periodic-container");
   const hideTable = ["hall", "diffusion", "ternary", "structures"].includes(mode);
-  document.getElementById("periodic-container").style.display = hideTable ? "none" : "block";
+  if (periodicContainer) {
+    periodicContainer.style.display = hideTable ? "none" : "block";
+  }
 
-  if (mode === "hall") drawHallChart();
+  if (mode === "hall" && typeof drawHallChart === "function") {
+    drawHallChart();
+  }
 }
