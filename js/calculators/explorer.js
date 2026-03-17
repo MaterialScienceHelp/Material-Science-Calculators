@@ -95,6 +95,18 @@ function showElementExplorer(el) {
 
   if (!el || !propertiesNode || !structureVisual || !structureInfo) return;
 
+  const extra = typeof getElementDetail === "function"
+    ? getElementDetail(el.s)
+    : {
+        name: el.s,
+        atomicNumber: "—",
+        density: "—",
+        meltingPoint: "—",
+        boilingPoint: "—",
+        oxidationStates: "—",
+        electronConfig: "—"
+      };
+
   if (emptyNode) emptyNode.style.display = "none";
   propertiesNode.style.display = "block";
 
@@ -104,18 +116,24 @@ function showElementExplorer(el) {
         ${el.s}
       </div>
       <div>
-        <div class="explorer-title">${el.s}</div>
+        <div class="explorer-title">${extra.name}</div>
         <div class="mini-note">${getCategoryLabel(el.cat)}</div>
       </div>
     </div>
 
     <div class="explorer-props-grid">
+      <div class="explorer-prop"><b>Symbol</b><span>${el.s}</span></div>
+      <div class="explorer-prop"><b>Atomic Number</b><span>${extra.atomicNumber}</span></div>
       <div class="explorer-prop"><b>Atomic Weight</b><span>${el.aw ?? "—"}</span></div>
       <div class="explorer-prop"><b>Atomic Radius</b><span>${el.rad ?? "—"} nm</span></div>
       <div class="explorer-prop"><b>Electronegativity</b><span>${el.en ?? "—"}</span></div>
       <div class="explorer-prop"><b>Valency</b><span>${el.v ?? "—"}</span></div>
       <div class="explorer-prop"><b>Crystal Structure</b><span>${el.str ?? "—"}</span></div>
-      <div class="explorer-prop"><b>Table Position</b><span>Row ${el.r}, Column ${el.c}</span></div>
+      <div class="explorer-prop"><b>Density</b><span>${extra.density} g/cm³</span></div>
+      <div class="explorer-prop"><b>Melting Point</b><span>${extra.meltingPoint} °C</span></div>
+      <div class="explorer-prop"><b>Boiling Point</b><span>${extra.boilingPoint} °C</span></div>
+      <div class="explorer-prop"><b>Oxidation States</b><span>${extra.oxidationStates}</span></div>
+      <div class="explorer-prop"><b>Electron Config</b><span>${extra.electronConfig}</span></div>
     </div>
   `;
 
