@@ -6,9 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetResultsOnly();
   resetExplorerPanel();
 
-  if (typeof drawHallChart === "function") {
-    drawHallChart();
-  }
+  if (typeof drawHallChart === "function") drawHallChart();
 
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => showCalc(btn.dataset.mode));
