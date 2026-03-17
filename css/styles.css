@@ -39,7 +39,7 @@ body {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -51,7 +51,7 @@ body {
   flex-wrap: wrap;
   gap: 8px;
   z-index: 1000;
-  max-width: calc(100vw - 390px);
+  max-width: calc(100vw - 370px);
   justify-content: flex-end;
 }
 
@@ -127,7 +127,7 @@ body {
   position: fixed;
   left: 18px;
   bottom: 18px;
-  width: 300px;
+  width: 280px;
   background: #fff5f5;
   border: 1px solid #ffd6da;
   padding: 16px;
@@ -160,22 +160,13 @@ body {
 
 #periodic-container {
   width: 100%;
-  max-width: 1120px;
+  max-width: 1180px;
   display: block;
 }
 
-.calc-view {
-  display: none;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-}
-
-.calc-view.active { display: flex; }
-
 .hero {
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .hero h1 {
@@ -184,19 +175,20 @@ body {
 }
 
 .hero p {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .toolbar {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1080px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-bottom: 8px;
 }
 
 .selection-badges {
@@ -243,16 +235,50 @@ body {
   margin-top: 8px;
 }
 
+.legend {
+  width: 100%;
+  max-width: 1080px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  justify-content: center;
+  font-size: 11px;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.table-scroll {
+  width: 100%;
+  max-width: 1080px;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 14px;
+}
+
 .periodic-table {
   display: grid;
-  grid-template-columns: repeat(18, minmax(36px, 1fr));
-  gap: 3px;
-  width: 100%;
-  max-width: 1000px;
-  padding: 8px;
-  background: rgba(255,255,255,0.5);
-  border-radius: 14px;
-  overflow-x: auto;
+  grid-template-columns: repeat(18, minmax(52px, 1fr));
+  gap: 4px;
+  width: max-content;
+  min-width: 100%;
+  padding: 10px;
+  background: rgba(255,255,255,0.75);
+  border-radius: 16px;
+  min-height: 720px;
 }
 
 .element {
@@ -264,23 +290,24 @@ body {
   align-items: center;
   cursor: pointer;
   font-size: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   transition: 0.12s ease;
   position: relative;
   text-align: center;
-  padding: 2px;
-  min-width: 36px;
+  padding: 3px;
+  min-width: 52px;
+  min-height: 52px;
 }
 
 .element:hover {
-  transform: scale(1.12);
+  transform: scale(1.08);
   z-index: 100;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
-.element b { font-size: 11px; }
-.element small { font-size: 7px; opacity: 0.8; }
+.element b { font-size: 12px; }
+.element small { font-size: 7px; opacity: 0.85; }
 
 .element.empty {
   background: transparent;
@@ -304,6 +331,15 @@ body {
   border: 2px solid #b45309;
   z-index: 50;
 }
+
+.calc-view {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calc-view.active { display: flex; }
 
 .result-grid,
 .metrics-grid,
@@ -433,31 +469,6 @@ body {
   gap: 12px;
 }
 
-.legend {
-  width: 100%;
-  max-width: 1000px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-  justify-content: center;
-  font-size: 11px;
-  color: #374151;
-}
-
-.legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.legend i {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  display: inline-block;
-  border: 1px solid rgba(0,0,0,0.08);
-}
-
 .mini-note {
   font-size: 12px;
   color: var(--muted);
@@ -548,6 +559,10 @@ canvas {
     top: 10px;
     max-width: none;
   }
+
+  .table-scroll {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 800px) {
@@ -567,7 +582,15 @@ canvas {
 
   .summary-card { grid-column: span 1; }
 
-  .periodic-table { grid-template-columns: repeat(18, minmax(28px, 1fr)); }
-  .element { min-width: 28px; }
-  .element b { font-size: 9px; }
+  .periodic-table {
+    grid-template-columns: repeat(18, minmax(44px, 1fr));
+    min-height: 680px;
+  }
+
+  .element {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .element b { font-size: 10px; }
 }
