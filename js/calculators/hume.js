@@ -1,170 +1,107 @@
-function updateBadges() {
-  document.getElementById("solvent-badge").textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
-  document.getElementById("solute-badge").textContent = `Solute: ${solute ? solute.s : "—"}`;
+function computeDelta(elements, fractions) {
+  const rBar = elements.reduce((sum, el, i) => sum + fractions[i] * el.rad, 0);
+  if (!rBar) return 0;
+  return Math.sqrt(
+    elements.reduce((sum, el, i) => sum + fractions[i] * Math.pow(1 - (el.rad / rBar), 2), 0)
+  ) * 100;
 }
 
-function updateCompositionLabels() {
-  document.getElementById("at-label").textContent = solvent ? `Atomic % of ${solvent.s}` : "Atomic % of Element 1";
-  document.getElementById("wt-label").textContent = solvent ? `Weight % of ${solvent.s}` : "Weight % of Element 1";
+function getSeverity(diff) {
+  if (diff <= 5) return { text: "Very low mismatch", cls: "severity-low" };
+  if (diff <= 10) return { text: "Low mismatch", cls: "severity-low" };
+  if (diff <= 15) return { text: "Moderate mismatch", cls: "severity-mid" };
+  return { text: "High mismatch", cls: "severity-high" };
 }
 
-function syncSelectionStyles() {
-  document.querySelectorAll(".element").forEach(node => {
-    node.classList.remove("solvent", "solute");
-    if (solvent && node.dataset.symbol === solvent.s) node.classList.add("solvent");
-    if (solute && node.dataset.symbol === solute.s) node.classList.add("solute");
-  });
+function getPhaseTendency(score, diff, enDiff) {
+  if (score === 4) {
+    return {
+      label: "Likely substitutional solid solution",
+      cls: "badge-success",
+      text: "All four simplified Hume-Rothery checks are favorable."
+    };
+  }
+  if (score >= 3 && diff <= 15) {
+    return {
+      label: "Moderate solid solution tendency",
+      cls: "badge-warning",
+      text: "Compatibility is reasonable, but one criterion may limit full miscibility."
+    };
+  }
+  if (enDiff > 0.4 && diff <= 15) {
+    return {
+      label: "Intermetallic tendency",
+      cls: "badge-purple",
+      text: "Electronegativity difference suggests compound-forming tendency."
+    };
+  }
+  return {
+    label: "Limited solubility / phase separation tendency",
+    cls: "badge-danger",
+    text: "Multiple criteria indicate poor substitutional compatibility."
+  };
 }
 
-function setRuleCard(id, html, pass) {
-  const node = document.getElementById(id);
-  node.innerHTML = html;
-  node.style.borderLeftColor = pass ? "var(--success)" : "var(--danger)";
+function getStrengthTendency(diff, enDiff) {
+  if (diff > 12 || enDiff > 0.5) {
+    return "High qualitative solid-solution strengthening tendency due to strong local lattice/electronic mismatch.";
+  }
+  if (diff > 6 || enDiff > 0.25) {
+    return "Moderate strengthening tendency with meaningful but not extreme mismatch.";
+  }
+  return "Low strengthening tendency; pair is relatively close in size and electronegativity.";
 }
 
-function showInlineMessage(message, type = "success") {
-  const targetId = currentMode === "at-wt"
-    ? "atwt-result"
-    : currentMode === "wt-at"
-    ? "wtat-result"
-    : currentMode === "density"
-    ? "density-result"
-    : "summary";
+function calculateHume() {
+  if (!solvent || !solute) return;
 
-  const node = document.getElementById(targetId);
-  if (!node) return;
+  const sizeDiff = Math.abs((solute.rad - solvent.rad) / solvent.rad) * 100;
+  const enDiff = Math.abs(solvent.en - solute.en);
+  const avgVEC = (solvent.v + solute.v) / 2;
+  const delta = computeDelta([solvent, solute], [0.5, 0.5]);
 
-  node.style.display = "block";
-  node.style.borderTop = `5px solid ${type === "success" ? "var(--success)" : "var(--warning)"}`;
-  node.innerHTML = message;
-}
+  const sizePass = sizeDiff <= 15;
+  const structurePass = solvent.str === solute.str;
+  const enPass = enDiff <= 0.40;
+  const valencyPass = solvent.v === solute.v;
 
-function resetResultsOnly() {
-  ["summary", "temp-note", "hp-result", "atwt-result", "wtat-result", "density-result", "diff-result", "ternary-result"].forEach(id => {
-    const node = document.getElementById(id);
-    if (node) {
-      node.style.display = "none";
-      node.innerHTML = "";
-      node.style.borderTop = "";
-    }
-  });
+  const score = [sizePass, structurePass, enPass, valencyPass].filter(Boolean).length;
 
-  document.getElementById("pair-meta").style.display = "none";
-  document.getElementById("hume-metrics").style.display = "none";
-  document.getElementById("atwt-extra").style.display = "none";
-  document.getElementById("wtat-extra").style.display = "none";
-  document.getElementById("ternary-extra").style.display = "none";
+  setRuleCard("rule1", `${sizePass ? "✅" : "❌"} <b>Atomic Size:</b> ${sizeDiff.toFixed(2)}% ${sizePass ? "(within 15%)" : "(above 15%)"}`, sizePass);
+  setRuleCard("rule2", `${structurePass ? "✅" : "❌"} <b>Crystal Structure:</b> ${solvent.str} vs ${solute.str}`, structurePass);
+  setRuleCard("rule3", `${enPass ? "✅" : "❌"} <b>Electronegativity Difference:</b> ${enDiff.toFixed(2)} ${enPass ? "(small)" : "(large)"}`, enPass);
+  setRuleCard("rule4", `${valencyPass ? "✅" : "❌"} <b>Valency:</b> ${solvent.v} vs ${solute.v}`, valencyPass);
 
-  ["rule1", "rule2", "rule3", "rule4"].forEach((id, idx) => {
-    const node = document.getElementById(id);
-    node.innerHTML = `Rule ${idx + 1}: Select two elements.`;
-    node.style.borderLeftColor = "#cbd5e1";
-  });
+  const severity = getSeverity(sizeDiff);
+  document.getElementById("hume-metrics").style.display = "grid";
+  document.getElementById("metric-mismatch").textContent = `${sizeDiff.toFixed(2)}%`;
+  document.getElementById("metric-severity").innerHTML = `<span class="${severity.cls}">${severity.text}</span>`;
+  document.getElementById("metric-vec").textContent = avgVEC.toFixed(2);
+  document.getElementById("metric-delta").textContent = `${delta.toFixed(2)}%`;
 
-  document.getElementById("phase-tendency").innerHTML = "Phase tendency will appear here.";
-  document.getElementById("strength-tendency").innerHTML = "Strengthening trend will appear here.";
-}
+  const phase = getPhaseTendency(score, sizeDiff, enDiff);
+  document.getElementById("phase-tendency").innerHTML = `<span class="phase-badge ${phase.cls}">${phase.label}</span><br>${phase.text}`;
+  document.getElementById("strength-tendency").innerHTML = `<b>Strengthening trend</b><br><br>${getStrengthTendency(sizeDiff, enDiff)}`;
 
-function resetTable() {
-  solvent = null;
-  solute = null;
+  const summary = document.getElementById("summary");
+  summary.style.display = "block";
 
-  ["at-val", "wt-val", "density-rho1", "density-rho2", "temp-input"].forEach(id => {
-    const node = document.getElementById(id);
-    if (node) node.value = "";
-  });
-
-  const densityC1 = document.getElementById("density-c1");
-  if (densityC1) densityC1.value = "50";
-
-  updateBadges();
-  updateCompositionLabels();
-  syncSelectionStyles();
-  resetResultsOnly();
-  drawHallChart();
-}
-
-function selectElement(el) {
-  if (!solvent || (solvent && solute)) {
-    solvent = el;
-    solute = null;
-  } else if (solvent && !solute) {
-    if (solvent.s === el.s) {
-      showInlineMessage("Please choose a different second element.", "warning");
-      return;
-    }
-    solute = el;
+  let verdict = "";
+  let color = "var(--danger)";
+  if (score === 4) {
+    verdict = "EXCELLENT SOLID SOLUBILITY";
+    color = "var(--success)";
+  } else if (score >= 2) {
+    verdict = "LIMITED / MODERATE SOLUBILITY";
+    color = "var(--warning)";
+  } else {
+    verdict = "POOR SUBSTITUTIONAL COMPATIBILITY";
   }
 
-  syncSelectionStyles();
-  updateBadges();
-  updateCompositionLabels();
-  resetResultsOnly();
+  summary.style.borderTop = `5px solid ${color}`;
+  summary.innerHTML = `${verdict}<small>Score: ${score}/4 | Pair: ${solvent.s} and ${solute.s} based on simplified Hume-Rothery screening, size-misfit, and electronic descriptors.</small>`;
 
-  if (currentMode === "hume" && solvent && solute && typeof calculateHume === "function") {
-    calculateHume();
-  }
-
-  if (["at-wt", "wt-at", "density"].includes(currentMode) && solvent && solute) {
-    showInlineMessage(`Selected pair: ${solvent.s} and ${solute.s}`, "success");
-  }
-}
-
-function buildTable() {
-  const table = document.getElementById("table");
-  table.innerHTML = "";
-
-  for (let row = 1; row <= 9; row++) {
-    for (let col = 1; col <= 18; col++) {
-      const el = elementsData.find(e => e.r === row && e.c === col);
-      const div = document.createElement("div");
-      div.style.gridColumn = col;
-      div.style.gridRow = row;
-
-      if (!el) {
-        div.className = "element empty";
-        table.appendChild(div);
-        continue;
-      }
-
-      div.className = "element";
-      div.style.backgroundColor = `var(--${el.cat})`;
-      div.dataset.symbol = el.s;
-      div.title = `${el.s} | Radius: ${el.rad} nm | Structure: ${el.str} | EN: ${el.en} | Valency: ${el.v} | AW: ${el.aw}`;
-      div.innerHTML = `<b>${el.s}</b><small>${el.rad} nm</small>`;
-      div.addEventListener("click", () => selectElement(el));
-
-      table.appendChild(div);
-    }
-  }
-
-  syncSelectionStyles();
-}
-
-function populateTernarySelects() {
-  const defaults = ["Al", "Si", "Mg"];
-  ["ternary-e1", "ternary-e2", "ternary-e3"].forEach((id, idx) => {
-    const select = document.getElementById(id);
-    if (!select) return;
-
-    select.innerHTML = elementsData.map(el => `<option value="${el.s}">${el.s}</option>`).join("");
-    select.value = defaults[idx];
-  });
-}
-
-function showCalc(mode) {
-  currentMode = mode;
-
-  document.querySelectorAll(".calc-view").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".theory-block").forEach(el => el.style.display = "none");
-
-  document.getElementById(`view-${mode}`).classList.add("active");
-  document.getElementById(`btn-${mode}`).classList.add("active");
-  document.getElementById(`theory-${mode}`).style.display = "block";
-
-  const hideTable = ["hall", "diffusion", "ternary", "structures"].includes(mode);
-  document.getElementById("periodic-container").style.display = hideTable ? "none" : "block";
-
-  if (mode === "hall") drawHallChart();
+  document.getElementById("pair-meta").style.display = "grid";
+  document.getElementById("solvent-meta").innerHTML = `<b>Solvent: ${solvent.s}</b><br>Radius: ${solvent.rad} nm<br>Structure: ${solvent.str}<br>EN: ${solvent.en}<br>Valency: ${solvent.v}<br>Atomic wt: ${solvent.aw}`;
+  document.getElementById("solute-meta").innerHTML = `<b>Solute: ${solute.s}</b><br>Radius: ${solute.rad} nm<br>Structure: ${solute.str}<br>EN: ${solute.en}<br>Valency: ${solute.v}<br>Atomic wt: ${solute.aw}`;
 }
