@@ -1,642 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  <title>Material Science Calculators | Hume-Rothery, Hall-Petch, Diffusion Tools</title>
-
-    <meta name="description" content="Free material science calculators for Hume-Rothery rules, Hall-Petch strengthening, atomic percent to weight percent conversion, diffusion, density, and ternary alloy analysis.">
-
-    <meta name="keywords" content="Hume Rothery calculator, Hall Petch calculator, material science calculator, alloy solubility tool, diffusion calculator, ternary alloy calculator, engineering materials">
-
-    <meta name="author" content="Ravi">
-
-    <meta name="robots" content="index, follow">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Engineering Materials Suite | Universe of Physics</title>
-  <style>
-    /*
-      ============================================================
-      Engineering Materials Suite
-      Cleaned + commented version for easier future improvement.
-      ============================================================
-    */
 
-    :root {
-      --solvent-color: #0d6efd;
-      --solute-color: #fd7e14;
-      --bg-color: #f5f7fb;
-      --panel: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #dbe2ea;
-      --success: #198754;
-      --warning: #fd7e14;
-      --danger: #dc3545;
-      --purple: #6f42c1;
-      --teal: #0f766e;
-      --shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
-      --yt-red: #ff0000;
+  <title>Material Science Calculators | Hume-Rothery, Hall-Petch, Diffusion Tools</title>
+  <meta name="description" content="Free material science calculators for Hume-Rothery rules, Hall-Petch strengthening, atomic percent to weight percent conversion, diffusion, density, and ternary alloy analysis.">
+  <meta name="keywords" content="Hume Rothery calculator, Hall Petch calculator, material science calculator, alloy solubility tool, diffusion calculator, ternary alloy calculator, engineering materials">
+  <meta name="author" content="Ravi">
+  <meta name="robots" content="index, follow">
 
-      /* Periodic table category colors */
-      --alkali: #ffb3b3;
-      --alkaline: #ffdead;
-      --transition: #add8e6;
-      --post-trans: #98fb98;
-      --metalloid: #e6e6fa;
-      --nonmetal: #ffff99;
-      --noble: #ffb6c1;
-      --lanthanide: #d8bfd8;
-      --actinide: #ffc0cb;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: var(--bg-color);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    /* Main 2-column layout */
-    .app-shell {
-      display: grid;
-      grid-template-columns: 360px minmax(0, 1fr);
-      min-height: 100vh;
-    }
-
-    /* Top tabs */
-    .nav-tabs {
-      position: fixed;
-      top: 16px;
-      right: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      z-index: 1000;
-      max-width: calc(100vw - 390px);
-      justify-content: flex-end;
-    }
-
-    .tab-btn {
-      padding: 9px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: white;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 12px;
-      transition: 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .tab-btn:hover { transform: translateY(-1px); }
-
-    .tab-btn.active {
-      background: var(--solvent-color);
-      color: white;
-      border-color: var(--solvent-color);
-    }
-
-    /* Left theory sidebar */
-    .sidebar {
-      background: var(--panel);
-      padding: 28px;
-      border-right: 1px solid var(--border);
-      min-height: 100vh;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.04);
-      position: relative;
-    }
-
-    .sidebar-scroll {
-      overflow-y: auto;
-      max-height: calc(100vh - 56px);
-      padding-right: 4px;
-      padding-bottom: 120px;
-    }
-
-    .sidebar h2 {
-      margin-top: 0;
-      font-size: 22px;
-      border-bottom: 2px solid var(--solvent-color);
-      padding-bottom: 8px;
-    }
-
-    .sidebar h3 {
-      color: var(--solvent-color);
-      font-size: 16px;
-      margin: 20px 0 8px;
-    }
-
-    .sidebar p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #374151;
-      margin: 0 0 12px;
-    }
-
-    .math-block,
-    .info-box {
-      background: #f0f7ff;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #d0e3ff;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .math-block { font-family: "Courier New", monospace; }
-
-    /* Learn section pinned to bottom-left */
-    .yt-promo {
-      position: fixed;
-      left: 18px;
-      bottom: 18px;
-      width: 300px;
-      background: #fff5f5;
-      border: 1px solid #ffd6da;
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      z-index: 1100;
-    }
-
-    .yt-btn {
-      background: var(--yt-red);
-      color: white;
-      text-decoration: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    /* Right content area */
-    .content {
-      width: 100%;
-      padding: 92px 20px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    #periodic-container {
-      width: 100%;
-      max-width: 1120px;
-      display: block;
-    }
-
-    .calc-view {
-      display: none;
-      width: 100%;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .calc-view.active { display: flex; }
-
-    .hero {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .hero p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .toolbar {
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .selection-badges {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: white;
-      border: 1px solid var(--border);
-      font-size: 12px;
-      font-weight: 700;
-      box-shadow: var(--shadow);
-    }
-
-    .badge.solvent { border-color: var(--solvent-color); color: var(--solvent-color); }
-    .badge.solute { border-color: var(--solute-color); color: var(--solute-color); }
-
-    .reset-btn,
-    .primary-btn {
-      border: none;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-size: 12px;
-      cursor: pointer;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .reset-btn {
-      background: #212529;
-      color: white;
-      border: 1px solid #111;
-    }
-
-    .primary-btn {
-      background: var(--solvent-color);
-      color: white;
-      width: 100%;
-      margin-top: 8px;
-    }
-
-    /* Periodic table */
-    .periodic-table {
-      display: grid;
-      grid-template-columns: repeat(18, minmax(36px, 1fr));
-      gap: 3px;
-      width: 100%;
-      max-width: 1000px;
-      padding: 8px;
-      background: rgba(255,255,255,0.5);
-      border-radius: 14px;
-      overflow-x: auto;
-    }
-
-    .element {
-      aspect-ratio: 1;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      font-size: 8px;
-      border-radius: 6px;
-      background: #fff;
-      transition: 0.12s ease;
-      position: relative;
-      text-align: center;
-      padding: 2px;
-      min-width: 36px;
-    }
-
-    .element:hover {
-      transform: scale(1.12);
-      z-index: 100;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-    }
-
-    .element b { font-size: 11px; }
-    .element small { font-size: 7px; opacity: 0.8; }
-
-    .element.empty {
-      background: transparent;
-      border: none;
-      cursor: default;
-      box-shadow: none;
-    }
-
-    .element.empty:hover { transform: none; }
-
-    .element.solvent {
-      background: var(--solvent-color) !important;
-      color: white !important;
-      border: 2px solid #084298;
-      z-index: 50;
-    }
-
-    .element.solute {
-      background: var(--solute-color) !important;
-      color: white !important;
-      border: 2px solid #b45309;
-      z-index: 50;
-    }
-
-    /* Cards and grids */
-    .result-grid,
-    .metrics-grid,
-    .formula-grid,
-    .structure-grid,
-    .triple-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      width: 100%;
-      max-width: 900px;
-      margin-top: 10px;
-    }
-
-    .metrics-grid.three,
-    .formula-grid.three,
-    .triple-grid.three {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .rule-card,
-    .summary-card,
-    .hp-card,
-    .panel-card,
-    .metric-card,
-    .chart-card,
-    .structure-card,
-    .phase-card,
-    .meta-card {
-      background: white;
-      border-radius: 14px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-
-    .rule-card,
-    .metric-card,
-    .structure-card,
-    .phase-card,
-    .panel-card,
-    .meta-card {
-      padding: 14px;
-      font-size: 13px;
-    }
-
-    .rule-card { border-left: 5px solid #cbd5e1; }
-
-    .summary-card {
-      grid-column: span 2;
-      padding: 18px;
-      text-align: center;
-      font-weight: 800;
-      display: none;
-    }
-
-    .summary-card small {
-      display: block;
-      margin-top: 6px;
-      font-weight: 500;
-      color: var(--muted);
-    }
-
-    .hp-card,
-    .panel-card,
-    .chart-card {
-      padding: 24px;
-      width: 100%;
-      max-width: 900px;
-      margin-top: 8px;
-    }
-
-    .hp-card.narrow,
-    .panel-card.narrow { max-width: 470px; }
-
-    .input-row,
-    .triple-inputs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .triple-inputs { grid-template-columns: repeat(3, 1fr); }
-
-    .input-group {
-      margin-bottom: 12px;
-      text-align: left;
-      width: 100%;
-    }
-
-    .input-group label {
-      display: block;
-      font-weight: 700;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-
-    .input-group input,
-    .input-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 14px;
-      background: white;
-    }
-
-    .calc-result {
-      margin-top: 16px;
-      padding: 14px;
-      background: #e8f4fd;
-      border: 1px solid #cbe7fb;
-      border-radius: 12px;
-      font-weight: 800;
-      color: #0056b3;
-      font-size: 16px;
-      text-align: center;
-      display: none;
-    }
-
-    .pair-meta {
-      width: 100%;
-      max-width: 900px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .legend {
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 16px;
-      justify-content: center;
-      font-size: 11px;
-      color: #374151;
-    }
-
-    .legend span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .legend i {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
-      display: inline-block;
-      border: 1px solid rgba(0,0,0,0.08);
-    }
-
-    .mini-note {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 8px;
-    }
-
-    .metric-title {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .metric-value {
-      font-size: 24px;
-      font-weight: 800;
-      margin-top: 6px;
-    }
-
-    .severity-low { color: var(--success); }
-    .severity-mid { color: var(--warning); }
-    .severity-high { color: var(--danger); }
-    .accent-purple { color: var(--purple); }
-    .accent-teal { color: var(--teal); }
-
-    .phase-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .badge-success { background: rgba(25, 135, 84, 0.12); color: var(--success); }
-    .badge-warning { background: rgba(253, 126, 20, 0.14); color: var(--warning); }
-    .badge-danger { background: rgba(220, 53, 69, 0.12); color: var(--danger); }
-    .badge-purple { background: rgba(111, 66, 193, 0.12); color: var(--purple); }
-
-    canvas {
-      width: 100%;
-      max-width: 100%;
-      border-radius: 12px;
-      background: #fbfdff;
-      border: 1px solid var(--border);
-    }
-
-    .table-like {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin-top: 10px;
-    }
-
-    .table-like th,
-    .table-like td {
-      border: 1px solid var(--border);
-      padding: 10px;
-      text-align: left;
-    }
-
-    .table-like th {
-      background: #f8fbff;
-      font-weight: 800;
-    }
-
-    @media (max-width: 1200px) {
-      .nav-tabs { max-width: calc(100vw - 30px); }
-    }
-
-    @media (max-width: 1100px) {
-      .app-shell { grid-template-columns: 1fr; }
-
-      .sidebar {
-        min-height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .sidebar-scroll {
-        max-height: none;
-        padding-bottom: 110px;
-      }
-
-      .content { padding-top: 112px; }
-
-      .yt-promo {
-        left: 16px;
-        bottom: 16px;
-        width: calc(100% - 32px);
-        max-width: 360px;
-      }
-
-      .nav-tabs {
-        left: 16px;
-        right: 16px;
-        top: 10px;
-        max-width: none;
-      }
-    }
-
-    @media (max-width: 800px) {
-      .result-grid,
-      .pair-meta,
-      .metrics-grid,
-      .structure-grid,
-      .triple-grid,
-      .formula-grid,
-      .input-row,
-      .triple-inputs,
-      .metrics-grid.three,
-      .formula-grid.three,
-      .triple-grid.three {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-card { grid-column: span 1; }
-
-      .periodic-table { grid-template-columns: repeat(18, minmax(28px, 1fr)); }
-      .element { min-width: 28px; }
-      .element b { font-size: 9px; }
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <!-- ==========================================================
-       Top navigation
-       ========================================================== -->
   <div class="nav-tabs">
-    <button id="btn-hume" class="tab-btn active" onclick="showCalc('hume')">Hume-Rothery</button>
-    <button id="btn-hall" class="tab-btn" onclick="showCalc('hall')">Hall-Petch</button>
-    <button id="btn-at-wt" class="tab-btn" onclick="showCalc('at-wt')">At% → Wt%</button>
-    <button id="btn-wt-at" class="tab-btn" onclick="showCalc('wt-at')">Wt% → At%</button>
-    <button id="btn-density" class="tab-btn" onclick="showCalc('density')">Density</button>
-    <button id="btn-diffusion" class="tab-btn" onclick="showCalc('diffusion')">Diffusion</button>
-    <button id="btn-ternary" class="tab-btn" onclick="showCalc('ternary')">Ternary Alloy</button>
-    <button id="btn-structures" class="tab-btn" onclick="showCalc('structures')">Crystal Structures</button>
+    <button id="btn-hume" class="tab-btn active" data-mode="hume">Hume-Rothery</button>
+    <button id="btn-hall" class="tab-btn" data-mode="hall">Hall-Petch</button>
+    <button id="btn-at-wt" class="tab-btn" data-mode="at-wt">At% → Wt%</button>
+    <button id="btn-wt-at" class="tab-btn" data-mode="wt-at">Wt% → At%</button>
+    <button id="btn-density" class="tab-btn" data-mode="density">Density</button>
+    <button id="btn-diffusion" class="tab-btn" data-mode="diffusion">Diffusion</button>
+    <button id="btn-ternary" class="tab-btn" data-mode="ternary">Ternary Alloy</button>
+    <button id="btn-structures" class="tab-btn" data-mode="structures">Crystal Structures</button>
   </div>
 
   <div class="app-shell">
-    <!-- ========================================================
-         Sidebar: only one theory block is visible at a time
-         ======================================================== -->
     <aside class="sidebar">
       <div class="sidebar-scroll">
-        <div id="theory-hume">
+        <div id="theory-hume" class="theory-block">
           <h2>Hume-Rothery Rules</h2>
           <p>Use this tool to estimate how well one element can dissolve substitutionally in another.</p>
           <h3>1. Atomic Size Factor</h3>
@@ -650,45 +41,44 @@
           <p>Elements with the same or compatible valency often dissolve more easily.</p>
           <div class="info-box" style="margin-top:14px;">
             <b>How to use:</b><br>
-            First click selects the solvent. Second click selects the solute. Optional temperature adds phase-change notes.
+            First click selects the solvent. Second click selects the solute.
           </div>
         </div>
 
-        <div id="theory-hall" style="display:none;">
+        <div id="theory-hall" class="theory-block" style="display:none;">
           <h2>Hall-Petch Law</h2>
           <p>Predict yield strength as grain size decreases.</p>
           <div class="math-block">σy = σ0 + ky / √d</div>
-          <p style="margin-top:12px;">Use <b>d in μm</b> consistently with the chosen ky value.</p>
         </div>
 
-        <div id="theory-at-wt" style="display:none;">
+        <div id="theory-at-wt" class="theory-block" style="display:none;">
           <h2>Atomic % to Weight %</h2>
-          <p>Select two elements from the table. Enter atomic % of element 1. The app computes binary weight fractions and extra descriptors.</p>
+          <p>Select two elements from the table. Enter atomic % of element 1.</p>
         </div>
 
-        <div id="theory-wt-at" style="display:none;">
+        <div id="theory-wt-at" class="theory-block" style="display:none;">
           <h2>Weight % to Atomic %</h2>
-          <p>Select two elements from the table. Enter weight % of element 1. The app computes atomic percentages and normalized fractions.</p>
+          <p>Select two elements from the table. Enter weight % of element 1.</p>
         </div>
 
-        <div id="theory-density" style="display:none;">
+        <div id="theory-density" class="theory-block" style="display:none;">
           <h2>Rule of Mixtures Density</h2>
           <p>Estimate binary alloy density using a simple inverse-mixture relation.</p>
           <div class="math-block">1 / ρmix = w1 / ρ1 + w2 / ρ2</div>
         </div>
 
-        <div id="theory-diffusion" style="display:none;">
+        <div id="theory-diffusion" class="theory-block" style="display:none;">
           <h2>Diffusion / Arrhenius Module</h2>
           <p>Estimate diffusion coefficient using the Arrhenius relation.</p>
           <div class="math-block">D = D₀ exp(-Q / RT)</div>
         </div>
 
-        <div id="theory-ternary" style="display:none;">
+        <div id="theory-ternary" class="theory-block" style="display:none;">
           <h2>Ternary Alloy Toolkit</h2>
           <p>Choose three elements and convert ternary at% to wt%, calculate average atomic weight, VEC, and size-misfit parameter.</p>
         </div>
 
-        <div id="theory-structures" style="display:none;">
+        <div id="theory-structures" class="theory-block" style="display:none;">
           <h2>Crystal Structure Reference</h2>
           <p>Educational panel for FCC, BCC, and HCP with packing factor, coordination number, and quick learning notes.</p>
         </div>
@@ -700,14 +90,11 @@
       </div>
     </aside>
 
-    <!-- ========================================================
-         Main content area
-         ======================================================== -->
     <main class="content">
       <section id="periodic-container">
         <div class="hero">
-          <h1>Engineering Materials Explorer</h1>
-          <p>Select elements from the periodic table for alloy and composition calculations.</p>
+          <h1>Material Science Calculators</h1>
+          <p>Free tools for alloy design, diffusion, strengthening, and material analysis.</p>
         </div>
 
         <div class="toolbar">
@@ -715,7 +102,7 @@
             <div class="badge solvent" id="solvent-badge">Solvent: —</div>
             <div class="badge solute" id="solute-badge">Solute: —</div>
           </div>
-          <button class="reset-btn" onclick="resetTable()">Reset Selection</button>
+          <button class="reset-btn" id="reset-selection-btn">Reset Selection</button>
         </div>
 
         <div class="legend" style="margin-top:10px; margin-bottom:10px;">
@@ -733,7 +120,6 @@
         <div id="table" class="periodic-table"></div>
       </section>
 
-      <!-- Hume-Rothery view -->
       <section id="view-hume" class="calc-view active">
         <div class="panel-card" style="max-width:900px;">
           <div class="input-row">
@@ -783,7 +169,6 @@
         </div>
       </section>
 
-      <!-- Hall-Petch view -->
       <section id="view-hall" class="calc-view">
         <div class="hp-card narrow">
           <div class="input-group">
@@ -798,7 +183,7 @@
             <label for="hp-d">d (grain size) [μm]</label>
             <input type="number" id="hp-d" placeholder="Enter grain size" step="any" />
           </div>
-          <button class="primary-btn" onclick="calculateHallPetch()">Calculate Yield Strength</button>
+          <button class="primary-btn" id="hall-btn">Calculate Yield Strength</button>
           <div id="hp-result" class="calc-result"></div>
         </div>
         <div class="chart-card" style="max-width:900px;">
@@ -807,14 +192,13 @@
         </div>
       </section>
 
-      <!-- Binary At% to Wt% -->
       <section id="view-at-wt" class="calc-view">
         <div class="hp-card narrow">
           <div class="input-group">
             <label id="at-label">Atomic % of Element 1</label>
             <input type="number" id="at-val" min="0" max="100" placeholder="Enter atomic %" step="any" />
           </div>
-          <button class="primary-btn" onclick="calcAtWt()">Convert to Weight %</button>
+          <button class="primary-btn" id="atwt-btn">Convert to Weight %</button>
           <div id="atwt-result" class="calc-result"></div>
         </div>
         <div class="formula-grid three" id="atwt-extra" style="display:none; max-width:900px;">
@@ -824,14 +208,13 @@
         </div>
       </section>
 
-      <!-- Binary Wt% to At% -->
       <section id="view-wt-at" class="calc-view">
         <div class="hp-card narrow">
           <div class="input-group">
             <label id="wt-label">Weight % of Element 1</label>
             <input type="number" id="wt-val" min="0" max="100" placeholder="Enter weight %" step="any" />
           </div>
-          <button class="primary-btn" onclick="calcWtAt()">Convert to Atomic %</button>
+          <button class="primary-btn" id="wtat-btn">Convert to Atomic %</button>
           <div id="wtat-result" class="calc-result"></div>
         </div>
         <div class="formula-grid three" id="wtat-extra" style="display:none; max-width:900px;">
@@ -841,7 +224,6 @@
         </div>
       </section>
 
-      <!-- Density -->
       <section id="view-density" class="calc-view">
         <div class="panel-card">
           <div class="input-row">
@@ -862,12 +244,11 @@
               <div class="info-box">Select two elements from the periodic table, then enter densities and composition.</div>
             </div>
           </div>
-          <button class="primary-btn" onclick="calculateDensity()">Calculate Alloy Density</button>
+          <button class="primary-btn" id="density-btn">Calculate Alloy Density</button>
           <div id="density-result" class="calc-result"></div>
         </div>
       </section>
 
-      <!-- Diffusion -->
       <section id="view-diffusion" class="calc-view">
         <div class="panel-card narrow">
           <div class="input-group">
@@ -882,12 +263,11 @@
             <label for="diff-t">Temperature T [K]</label>
             <input type="number" id="diff-t" placeholder="e.g. 800" step="any" />
           </div>
-          <button class="primary-btn" onclick="calculateDiffusion()">Calculate Diffusion Coefficient</button>
+          <button class="primary-btn" id="diffusion-btn">Calculate Diffusion Coefficient</button>
           <div id="diff-result" class="calc-result"></div>
         </div>
       </section>
 
-      <!-- Ternary -->
       <section id="view-ternary" class="calc-view">
         <div class="panel-card">
           <div class="triple-inputs">
@@ -900,7 +280,7 @@
             <div class="input-group"><label for="ternary-c2">At% Element 2</label><input type="number" id="ternary-c2" value="33.33" step="any" /></div>
             <div class="input-group"><label for="ternary-c3">At% Element 3</label><input type="number" id="ternary-c3" value="33.34" step="any" /></div>
           </div>
-          <button class="primary-btn" onclick="calculateTernary()">Calculate Ternary Descriptors</button>
+          <button class="primary-btn" id="ternary-btn">Calculate Ternary Descriptors</button>
           <div id="ternary-result" class="calc-result"></div>
         </div>
         <div class="triple-grid three" id="ternary-extra" style="display:none; max-width:900px;">
@@ -910,7 +290,6 @@
         </div>
       </section>
 
-      <!-- Structures -->
       <section id="view-structures" class="calc-view">
         <div class="structure-grid">
           <div class="structure-card"><b>FCC</b><br><br>Coordination number: 12<br>Atomic packing factor: 0.74<br>Slip systems: high<br>Common traits: ductile, close-packed, strong formability.<div class="mini-note">Examples: Al, Cu, Ni, Ag, Au, Pt.</div></div>
@@ -918,819 +297,36 @@
           <div class="structure-card"><b>HCP</b><br><br>Coordination number: 12<br>Atomic packing factor: 0.74<br>Slip systems: limited at room temperature<br>Common traits: anisotropy, lower room-temperature ductility than FCC.<div class="mini-note">Examples: Mg, Ti, Zn, Co, Zr.</div></div>
           <div class="structure-card"><b>Temperature-sensitive phase notes</b><br><br>Fe: BCC at room T, FCC at elevated T.<br>Ti: HCP at room T, BCC at elevated T.<br>Co: HCP at lower T, FCC at higher T.<div class="mini-note">Use the Hume-Rothery temperature box for quick phase reminders.</div></div>
         </div>
-        <div class="panel-card" style="max-width:900px;">
-          <table class="table-like">
-            <thead>
-              <tr><th>Structure</th><th>CN</th><th>APF</th><th>Typical behavior</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>FCC</td><td>12</td><td>0.74</td><td>High ductility, extensive slip</td></tr>
-              <tr><td>BCC</td><td>8</td><td>0.68</td><td>Higher strength, non-close-packed</td></tr>
-              <tr><td>HCP</td><td>12</td><td>0.74</td><td>Close-packed, fewer easy slip systems</td></tr>
-            </tbody>
-          </table>
-        </div>
+      </section>
+
+      <section class="seo-content">
+        <h2>What is the Hume-Rothery Rule?</h2>
+        <p>
+          Hume-Rothery rules help predict whether two metals can form a substitutional solid solution.
+          The most important checks are atomic size difference, crystal structure similarity,
+          electronegativity difference, and valency compatibility.
+        </p>
+
+        <h2>Why is this calculator useful?</h2>
+        <p>
+          This tool helps students, researchers, and engineers quickly estimate alloy compatibility,
+          compare phase tendency, study Hall-Petch strengthening, convert atomic percent to weight percent,
+          and explore diffusion and ternary alloy descriptors.
+        </p>
+
+        <h2>Who should use this?</h2>
+        <p>
+          This website is useful for material science students, metallurgy learners, alloy design researchers,
+          and engineers working on phase selection, strengthening behavior, and composition calculations.
+        </p>
       </section>
     </main>
   </div>
 
-  <script>
-    /*
-      ============================================================
-      DATA + GLOBALS
-      ============================================================
-    */
-
-    let solvent = null;
-    let solute = null;
-    let currentMode = 'hume';
-    const R_GAS = 8.314; // J/mol.K
-
-    /*
-      Partial but broad engineering-oriented periodic table dataset.
-      Values are approximate for several heavy / synthetic elements.
-      Keys:
-      s  = symbol
-      r  = row in custom display grid
-      c  = column in custom display grid
-      cat = category color class
-      rad = atomic radius in nm (approx)
-      str = room-temperature structure / simple label
-      en = electronegativity (Pauling, approximate)
-      v  = valency / simple VEC-like value used here
-      aw = atomic weight
-    */
-    const elementsData = [
-      { s: 'H', r: 1, c: 1, cat: 'nonmetal', rad: 0.053, str: 'Gas', en: 2.20, v: 1, aw: 1.008 },
-      { s: 'He', r: 1, c: 18, cat: 'noble', rad: 0.031, str: 'Gas', en: 0, v: 0, aw: 4.003 },
-      { s: 'Li', r: 2, c: 1, cat: 'alkali', rad: 0.152, str: 'BCC', en: 0.98, v: 1, aw: 6.94 },
-      { s: 'Be', r: 2, c: 2, cat: 'alkaline', rad: 0.112, str: 'HCP', en: 1.57, v: 2, aw: 9.012 },
-      { s: 'B', r: 2, c: 13, cat: 'metalloid', rad: 0.082, str: 'Rhom', en: 2.04, v: 3, aw: 10.81 },
-      { s: 'C', r: 2, c: 14, cat: 'nonmetal', rad: 0.077, str: 'Hex', en: 2.55, v: 4, aw: 12.011 },
-      { s: 'N', r: 2, c: 15, cat: 'nonmetal', rad: 0.075, str: 'Gas', en: 3.04, v: 3, aw: 14.007 },
-      { s: 'O', r: 2, c: 16, cat: 'nonmetal', rad: 0.073, str: 'Gas', en: 3.44, v: 2, aw: 15.999 },
-      { s: 'F', r: 2, c: 17, cat: 'nonmetal', rad: 0.071, str: 'Gas', en: 3.98, v: 1, aw: 18.998 },
-      { s: 'Ne', r: 2, c: 18, cat: 'noble', rad: 0.069, str: 'Gas', en: 0, v: 0, aw: 20.180 },
-      { s: 'Na', r: 3, c: 1, cat: 'alkali', rad: 0.186, str: 'BCC', en: 0.93, v: 1, aw: 22.990 },
-      { s: 'Mg', r: 3, c: 2, cat: 'alkaline', rad: 0.160, str: 'HCP', en: 1.31, v: 2, aw: 24.305 },
-      { s: 'Al', r: 3, c: 13, cat: 'post-trans', rad: 0.143, str: 'FCC', en: 1.61, v: 3, aw: 26.982 },
-      { s: 'Si', r: 3, c: 14, cat: 'metalloid', rad: 0.118, str: 'Dia', en: 1.90, v: 4, aw: 28.085 },
-      { s: 'P', r: 3, c: 15, cat: 'nonmetal', rad: 0.110, str: 'Orth', en: 2.19, v: 5, aw: 30.974 },
-      { s: 'S', r: 3, c: 16, cat: 'nonmetal', rad: 0.103, str: 'Orth', en: 2.58, v: 2, aw: 32.06 },
-      { s: 'Cl', r: 3, c: 17, cat: 'nonmetal', rad: 0.099, str: 'Gas', en: 3.16, v: 1, aw: 35.45 },
-      { s: 'Ar', r: 3, c: 18, cat: 'noble', rad: 0.097, str: 'Gas', en: 0, v: 0, aw: 39.948 },
-      { s: 'K', r: 4, c: 1, cat: 'alkali', rad: 0.227, str: 'BCC', en: 0.82, v: 1, aw: 39.098 },
-      { s: 'Ca', r: 4, c: 2, cat: 'alkaline', rad: 0.197, str: 'FCC', en: 1.00, v: 2, aw: 40.078 },
-      { s: 'Sc', r: 4, c: 3, cat: 'transition', rad: 0.162, str: 'HCP', en: 1.36, v: 3, aw: 44.956 },
-      { s: 'Ti', r: 4, c: 4, cat: 'transition', rad: 0.145, str: 'HCP', en: 1.54, v: 4, aw: 47.867 },
-      { s: 'V', r: 4, c: 5, cat: 'transition', rad: 0.132, str: 'BCC', en: 1.63, v: 3, aw: 50.942 },
-      { s: 'Cr', r: 4, c: 6, cat: 'transition', rad: 0.125, str: 'BCC', en: 1.66, v: 3, aw: 51.996 },
-      { s: 'Mn', r: 4, c: 7, cat: 'transition', rad: 0.124, str: 'Comp', en: 1.55, v: 2, aw: 54.938 },
-      { s: 'Fe', r: 4, c: 8, cat: 'transition', rad: 0.124, str: 'BCC', en: 1.83, v: 2, aw: 55.845 },
-      { s: 'Co', r: 4, c: 9, cat: 'transition', rad: 0.125, str: 'HCP', en: 1.88, v: 2, aw: 58.933 },
-      { s: 'Ni', r: 4, c: 10, cat: 'transition', rad: 0.125, str: 'FCC', en: 1.91, v: 2, aw: 58.693 },
-      { s: 'Cu', r: 4, c: 11, cat: 'transition', rad: 0.128, str: 'FCC', en: 1.90, v: 2, aw: 63.546 },
-      { s: 'Zn', r: 4, c: 12, cat: 'transition', rad: 0.133, str: 'HCP', en: 1.65, v: 2, aw: 65.38 },
-      { s: 'Ga', r: 4, c: 13, cat: 'post-trans', rad: 0.122, str: 'Orth', en: 1.81, v: 3, aw: 69.723 },
-      { s: 'Ge', r: 4, c: 14, cat: 'metalloid', rad: 0.122, str: 'Dia', en: 2.01, v: 4, aw: 72.630 },
-      { s: 'As', r: 4, c: 15, cat: 'metalloid', rad: 0.119, str: 'Rhom', en: 2.18, v: 5, aw: 74.922 },
-      { s: 'Se', r: 4, c: 16, cat: 'nonmetal', rad: 0.116, str: 'Hex', en: 2.55, v: 2, aw: 78.971 },
-      { s: 'Br', r: 4, c: 17, cat: 'nonmetal', rad: 0.114, str: 'Liq', en: 2.96, v: 1, aw: 79.904 },
-      { s: 'Kr', r: 4, c: 18, cat: 'noble', rad: 0.110, str: 'Gas', en: 3.00, v: 0, aw: 83.798 },
-      { s: 'Rb', r: 5, c: 1, cat: 'alkali', rad: 0.248, str: 'BCC', en: 0.82, v: 1, aw: 85.468 },
-      { s: 'Sr', r: 5, c: 2, cat: 'alkaline', rad: 0.215, str: 'FCC', en: 0.95, v: 2, aw: 87.62 },
-      { s: 'Y', r: 5, c: 3, cat: 'transition', rad: 0.180, str: 'HCP', en: 1.22, v: 3, aw: 88.906 },
-      { s: 'Zr', r: 5, c: 4, cat: 'transition', rad: 0.159, str: 'HCP', en: 1.33, v: 4, aw: 91.224 },
-      { s: 'Nb', r: 5, c: 5, cat: 'transition', rad: 0.143, str: 'BCC', en: 1.60, v: 5, aw: 92.906 },
-      { s: 'Mo', r: 5, c: 6, cat: 'transition', rad: 0.136, str: 'BCC', en: 2.16, v: 4, aw: 95.95 },
-      { s: 'Tc', r: 5, c: 7, cat: 'transition', rad: 0.136, str: 'HCP', en: 1.90, v: 7, aw: 98.0 },
-      { s: 'Ru', r: 5, c: 8, cat: 'transition', rad: 0.134, str: 'HCP', en: 2.20, v: 3, aw: 101.07 },
-      { s: 'Rh', r: 5, c: 9, cat: 'transition', rad: 0.134, str: 'FCC', en: 2.28, v: 3, aw: 102.906 },
-      { s: 'Pd', r: 5, c: 10, cat: 'transition', rad: 0.137, str: 'FCC', en: 2.20, v: 2, aw: 106.42 },
-      { s: 'Ag', r: 5, c: 11, cat: 'transition', rad: 0.144, str: 'FCC', en: 1.93, v: 1, aw: 107.868 },
-      { s: 'Cd', r: 5, c: 12, cat: 'transition', rad: 0.151, str: 'HCP', en: 1.69, v: 2, aw: 112.414 },
-      { s: 'In', r: 5, c: 13, cat: 'post-trans', rad: 0.144, str: 'Tetr', en: 1.78, v: 3, aw: 114.818 },
-      { s: 'Sn', r: 5, c: 14, cat: 'post-trans', rad: 0.141, str: 'BCT', en: 1.96, v: 4, aw: 118.710 },
-      { s: 'Sb', r: 5, c: 15, cat: 'metalloid', rad: 0.138, str: 'Rhom', en: 2.05, v: 5, aw: 121.760 },
-      { s: 'Te', r: 5, c: 16, cat: 'metalloid', rad: 0.135, str: 'Hex', en: 2.10, v: 6, aw: 127.60 },
-      { s: 'I', r: 5, c: 17, cat: 'nonmetal', rad: 0.133, str: 'Orth', en: 2.66, v: 1, aw: 126.904 },
-      { s: 'Xe', r: 5, c: 18, cat: 'noble', rad: 0.130, str: 'Gas', en: 2.60, v: 0, aw: 131.293 },
-      { s: 'Cs', r: 6, c: 1, cat: 'alkali', rad: 0.265, str: 'BCC', en: 0.79, v: 1, aw: 132.905 },
-      { s: 'Ba', r: 6, c: 2, cat: 'alkaline', rad: 0.222, str: 'BCC', en: 0.89, v: 2, aw: 137.327 },
-      { s: 'Hf', r: 6, c: 4, cat: 'transition', rad: 0.159, str: 'HCP', en: 1.30, v: 4, aw: 178.49 },
-      { s: 'Ta', r: 6, c: 5, cat: 'transition', rad: 0.146, str: 'BCC', en: 1.50, v: 5, aw: 180.948 },
-      { s: 'W', r: 6, c: 6, cat: 'transition', rad: 0.137, str: 'BCC', en: 2.36, v: 4, aw: 183.84 },
-      { s: 'Re', r: 6, c: 7, cat: 'transition', rad: 0.137, str: 'HCP', en: 1.90, v: 7, aw: 186.207 },
-      { s: 'Os', r: 6, c: 8, cat: 'transition', rad: 0.135, str: 'HCP', en: 2.20, v: 4, aw: 190.23 },
-      { s: 'Ir', r: 6, c: 9, cat: 'transition', rad: 0.136, str: 'FCC', en: 2.20, v: 4, aw: 192.217 },
-      { s: 'Pt', r: 6, c: 10, cat: 'transition', rad: 0.139, str: 'FCC', en: 2.28, v: 2, aw: 195.084 },
-      { s: 'Au', r: 6, c: 11, cat: 'transition', rad: 0.144, str: 'FCC', en: 2.54, v: 1, aw: 196.967 },
-      { s: 'Hg', r: 6, c: 12, cat: 'transition', rad: 0.151, str: 'Liq', en: 2.00, v: 2, aw: 200.592 },
-      { s: 'Tl', r: 6, c: 13, cat: 'post-trans', rad: 0.156, str: 'HCP', en: 1.62, v: 1, aw: 204.38 },
-      { s: 'Pb', r: 6, c: 14, cat: 'post-trans', rad: 0.175, str: 'FCC', en: 2.33, v: 2, aw: 207.2 },
-      { s: 'Bi', r: 6, c: 15, cat: 'post-trans', rad: 0.148, str: 'Rhom', en: 2.02, v: 3, aw: 208.980 },
-      { s: 'Po', r: 6, c: 16, cat: 'metalloid', rad: 0.140, str: 'SC', en: 2.00, v: 2, aw: 209.0 },
-      { s: 'At', r: 6, c: 17, cat: 'metalloid', rad: 0.150, str: 'Unknown', en: 2.20, v: 1, aw: 210.0 },
-      { s: 'Rn', r: 6, c: 18, cat: 'noble', rad: 0.145, str: 'Gas', en: 0, v: 0, aw: 222.0 },
-      { s: 'Fr', r: 7, c: 1, cat: 'alkali', rad: 0.270, str: 'BCC', en: 0.70, v: 1, aw: 223.0 },
-      { s: 'Ra', r: 7, c: 2, cat: 'alkaline', rad: 0.223, str: 'BCC', en: 0.90, v: 2, aw: 226.0 },
-      { s: 'Rf', r: 7, c: 4, cat: 'transition', rad: 0.157, str: 'Unknown', en: 1.30, v: 4, aw: 267.0 },
-      { s: 'Db', r: 7, c: 5, cat: 'transition', rad: 0.149, str: 'Unknown', en: 1.50, v: 5, aw: 270.0 },
-      { s: 'Sg', r: 7, c: 6, cat: 'transition', rad: 0.143, str: 'Unknown', en: 1.90, v: 6, aw: 271.0 },
-      { s: 'Bh', r: 7, c: 7, cat: 'transition', rad: 0.141, str: 'Unknown', en: 2.00, v: 7, aw: 270.0 },
-      { s: 'Hs', r: 7, c: 8, cat: 'transition', rad: 0.134, str: 'Unknown', en: 2.20, v: 8, aw: 277.0 },
-      { s: 'Mt', r: 7, c: 9, cat: 'transition', rad: 0.129, str: 'Unknown', en: 2.30, v: 1, aw: 278.0 },
-      { s: 'Ds', r: 7, c: 10, cat: 'transition', rad: 0.128, str: 'Unknown', en: 2.40, v: 2, aw: 281.0 },
-      { s: 'Rg', r: 7, c: 11, cat: 'transition', rad: 0.138, str: 'Unknown', en: 2.60, v: 1, aw: 282.0 },
-      { s: 'Cn', r: 7, c: 12, cat: 'transition', rad: 0.147, str: 'Unknown', en: 2.00, v: 2, aw: 285.0 },
-      { s: 'Nh', r: 7, c: 13, cat: 'post-trans', rad: 0.170, str: 'Unknown', en: 1.50, v: 1, aw: 286.0 },
-      { s: 'Fl', r: 7, c: 14, cat: 'post-trans', rad: 0.160, str: 'Unknown', en: 1.80, v: 2, aw: 289.0 },
-      { s: 'Mc', r: 7, c: 15, cat: 'post-trans', rad: 0.155, str: 'Unknown', en: 1.90, v: 3, aw: 290.0 },
-      { s: 'Lv', r: 7, c: 16, cat: 'post-trans', rad: 0.150, str: 'Unknown', en: 2.00, v: 2, aw: 293.0 },
-      { s: 'Ts', r: 7, c: 17, cat: 'metalloid', rad: 0.145, str: 'Unknown', en: 2.20, v: 1, aw: 294.0 },
-      { s: 'Og', r: 7, c: 18, cat: 'noble', rad: 0.152, str: 'Unknown', en: 0, v: 0, aw: 294.0 },
-      { s: 'La', r: 8, c: 4, cat: 'lanthanide', rad: 0.187, str: 'DHCP', en: 1.10, v: 3, aw: 138.905 },
-      { s: 'Ce', r: 8, c: 5, cat: 'lanthanide', rad: 0.182, str: 'FCC', en: 1.12, v: 3, aw: 140.116 },
-      { s: 'Pr', r: 8, c: 6, cat: 'lanthanide', rad: 0.182, str: 'DHCP', en: 1.13, v: 3, aw: 140.908 },
-      { s: 'Nd', r: 8, c: 7, cat: 'lanthanide', rad: 0.181, str: 'DHCP', en: 1.14, v: 3, aw: 144.242 },
-      { s: 'Pm', r: 8, c: 8, cat: 'lanthanide', rad: 0.180, str: 'Hex', en: 1.13, v: 3, aw: 145.0 },
-      { s: 'Sm', r: 8, c: 9, cat: 'lanthanide', rad: 0.180, str: 'Rhom', en: 1.17, v: 3, aw: 150.36 },
-      { s: 'Eu', r: 8, c: 10, cat: 'lanthanide', rad: 0.199, str: 'BCC', en: 1.20, v: 2, aw: 151.964 },
-      { s: 'Gd', r: 8, c: 11, cat: 'lanthanide', rad: 0.180, str: 'HCP', en: 1.20, v: 3, aw: 157.25 },
-      { s: 'Tb', r: 8, c: 12, cat: 'lanthanide', rad: 0.177, str: 'HCP', en: 1.10, v: 3, aw: 158.925 },
-      { s: 'Dy', r: 8, c: 13, cat: 'lanthanide', rad: 0.178, str: 'HCP', en: 1.22, v: 3, aw: 162.500 },
-      { s: 'Ho', r: 8, c: 14, cat: 'lanthanide', rad: 0.176, str: 'HCP', en: 1.23, v: 3, aw: 164.930 },
-      { s: 'Er', r: 8, c: 15, cat: 'lanthanide', rad: 0.176, str: 'HCP', en: 1.24, v: 3, aw: 167.259 },
-      { s: 'Tm', r: 8, c: 16, cat: 'lanthanide', rad: 0.175, str: 'HCP', en: 1.25, v: 3, aw: 168.934 },
-      { s: 'Yb', r: 8, c: 17, cat: 'lanthanide', rad: 0.194, str: 'FCC', en: 1.10, v: 2, aw: 173.045 },
-      { s: 'Lu', r: 8, c: 18, cat: 'lanthanide', rad: 0.173, str: 'HCP', en: 1.27, v: 3, aw: 174.967 },
-      { s: 'Ac', r: 9, c: 4, cat: 'actinide', rad: 0.188, str: 'FCC', en: 1.10, v: 3, aw: 227.0 },
-      { s: 'Th', r: 9, c: 5, cat: 'actinide', rad: 0.180, str: 'FCC', en: 1.30, v: 4, aw: 232.038 },
-      { s: 'Pa', r: 9, c: 6, cat: 'actinide', rad: 0.161, str: 'Tetr', en: 1.50, v: 5, aw: 231.036 },
-      { s: 'U', r: 9, c: 7, cat: 'actinide', rad: 0.156, str: 'Orth', en: 1.38, v: 6, aw: 238.029 },
-      { s: 'Np', r: 9, c: 8, cat: 'actinide', rad: 0.155, str: 'Orth', en: 1.36, v: 5, aw: 237.0 },
-      { s: 'Pu', r: 9, c: 9, cat: 'actinide', rad: 0.159, str: 'Mono', en: 1.28, v: 4, aw: 244.0 },
-      { s: 'Am', r: 9, c: 10, cat: 'actinide', rad: 0.173, str: 'DHCP', en: 1.13, v: 3, aw: 243.0 },
-      { s: 'Cm', r: 9, c: 11, cat: 'actinide', rad: 0.174, str: 'DHCP', en: 1.28, v: 3, aw: 247.0 },
-      { s: 'Bk', r: 9, c: 12, cat: 'actinide', rad: 0.170, str: 'HCP', en: 1.30, v: 3, aw: 247.0 },
-      { s: 'Cf', r: 9, c: 13, cat: 'actinide', rad: 0.169, str: 'HCP', en: 1.30, v: 3, aw: 251.0 },
-      { s: 'Es', r: 9, c: 14, cat: 'actinide', rad: 0.168, str: 'HCP', en: 1.30, v: 3, aw: 252.0 },
-      { s: 'Fm', r: 9, c: 15, cat: 'actinide', rad: 0.167, str: 'Unknown', en: 1.30, v: 3, aw: 257.0 },
-      { s: 'Md', r: 9, c: 16, cat: 'actinide', rad: 0.166, str: 'Unknown', en: 1.30, v: 3, aw: 258.0 },
-      { s: 'No', r: 9, c: 17, cat: 'actinide', rad: 0.176, str: 'FCC', en: 1.30, v: 2, aw: 259.0 },
-      { s: 'Lr', r: 9, c: 18, cat: 'actinide', rad: 0.161, str: 'Unknown', en: 1.30, v: 3, aw: 266.0 }
-    ];
-
-    /* Temperature-dependent structure notes for a few important metals */
-    const phaseNotes = {
-      Fe: [
-        { min: -273, max: 912, text: 'Fe is primarily BCC (α-ferrite) in this temperature range.' },
-        { min: 912, max: 1394, text: 'Fe transitions to FCC (γ-austenite) above ~912°C.' },
-        { min: 1394, max: 2500, text: 'Fe returns to BCC (δ-ferrite) at very high temperature.' }
-      ],
-      Ti: [
-        { min: -273, max: 882, text: 'Ti is HCP (α-Ti) below ~882°C.' },
-        { min: 882, max: 2500, text: 'Ti becomes BCC (β-Ti) above ~882°C.' }
-      ],
-      Co: [
-        { min: -273, max: 417, text: 'Co is mostly HCP at lower temperature.' },
-        { min: 417, max: 2500, text: 'Co tends toward FCC at elevated temperature.' }
-      ]
-    };
-
-    /*
-      ============================================================
-      BASIC HELPERS
-      ============================================================
-    */
-
-    function getElementBySymbol(symbol) {
-      return elementsData.find(e => e.s === symbol) || null;
-    }
-
-    function computeDelta(elements, fractions) {
-      const rBar = elements.reduce((sum, el, i) => sum + fractions[i] * el.rad, 0);
-      if (!rBar) return 0;
-      return Math.sqrt(
-        elements.reduce((sum, el, i) => sum + fractions[i] * Math.pow(1 - (el.rad / rBar), 2), 0)
-      ) * 100;
-    }
-
-    function getSeverity(diff) {
-      if (diff <= 5) return { text: 'Very low mismatch', cls: 'severity-low' };
-      if (diff <= 10) return { text: 'Low mismatch', cls: 'severity-low' };
-      if (diff <= 15) return { text: 'Moderate mismatch', cls: 'severity-mid' };
-      return { text: 'High mismatch', cls: 'severity-high' };
-    }
-
-    function getPhaseTendency(score, diff, enDiff) {
-      if (score === 4) {
-        return {
-          label: 'Likely substitutional solid solution',
-          cls: 'badge-success',
-          text: 'All four simplified Hume-Rothery checks are favorable.'
-        };
-      }
-      if (score >= 3 && diff <= 15) {
-        return {
-          label: 'Moderate solid solution tendency',
-          cls: 'badge-warning',
-          text: 'Compatibility is reasonable, but one criterion may limit full miscibility.'
-        };
-      }
-      if (enDiff > 0.4 && diff <= 15) {
-        return {
-          label: 'Intermetallic tendency',
-          cls: 'badge-purple',
-          text: 'Electronegativity difference suggests compound-forming tendency.'
-        };
-      }
-      return {
-        label: 'Limited solubility / phase separation tendency',
-        cls: 'badge-danger',
-        text: 'Multiple criteria indicate poor substitutional compatibility.'
-      };
-    }
-
-    function getStrengthTendency(diff, enDiff) {
-      if (diff > 12 || enDiff > 0.5) {
-        return 'High qualitative solid-solution strengthening tendency due to strong local lattice/electronic mismatch.';
-      }
-      if (diff > 6 || enDiff > 0.25) {
-        return 'Moderate strengthening tendency with meaningful but not extreme mismatch.';
-      }
-      return 'Low strengthening tendency; pair is relatively close in size and electronegativity.';
-    }
-
-    function getTemperatureNote(element, tempC) {
-      if (Number.isNaN(tempC) || !phaseNotes[element.s]) return null;
-      const note = phaseNotes[element.s].find(n => tempC >= n.min && tempC < n.max);
-      return note ? note.text : null;
-    }
-
-    /*
-      ============================================================
-      UI HELPERS
-      ============================================================
-    */
-
-    function updateBadges() {
-      document.getElementById('solvent-badge').textContent = `Solvent: ${solvent ? solvent.s : '—'}`;
-      document.getElementById('solute-badge').textContent = `Solute: ${solute ? solute.s : '—'}`;
-    }
-
-    function updateCompositionLabels() {
-      document.getElementById('at-label').textContent = solvent ? `Atomic % of ${solvent.s}` : 'Atomic % of Element 1';
-      document.getElementById('wt-label').textContent = solvent ? `Weight % of ${solvent.s}` : 'Weight % of Element 1';
-    }
-
-    function syncSelectionStyles() {
-      document.querySelectorAll('.element').forEach(node => {
-        node.classList.remove('solvent', 'solute');
-        if (solvent && node.dataset.symbol === solvent.s) node.classList.add('solvent');
-        if (solute && node.dataset.symbol === solute.s) node.classList.add('solute');
-      });
-    }
-
-    function setRuleCard(id, html, pass) {
-      const node = document.getElementById(id);
-      node.innerHTML = html;
-      node.style.borderLeftColor = pass ? 'var(--success)' : 'var(--danger)';
-    }
-
-    function showInlineMessage(message, type = 'success') {
-      const targetId = currentMode === 'at-wt'
-        ? 'atwt-result'
-        : currentMode === 'wt-at'
-        ? 'wtat-result'
-        : currentMode === 'density'
-        ? 'density-result'
-        : 'summary';
-
-      const node = document.getElementById(targetId);
-      if (!node) return;
-
-      node.style.display = 'block';
-      node.style.borderTop = `5px solid ${type === 'success' ? 'var(--success)' : 'var(--warning)'}`;
-      node.innerHTML = message;
-    }
-
-    function resetResultsOnly() {
-      /* Hide result blocks */
-      ['summary', 'temp-note', 'hp-result', 'atwt-result', 'wtat-result', 'density-result', 'diff-result', 'ternary-result'].forEach(id => {
-        const node = document.getElementById(id);
-        if (node) {
-          node.style.display = 'none';
-          node.innerHTML = '';
-          node.style.borderTop = '';
-        }
-      });
-
-      /* Hide extra descriptor sections */
-      document.getElementById('pair-meta').style.display = 'none';
-      document.getElementById('hume-metrics').style.display = 'none';
-      document.getElementById('atwt-extra').style.display = 'none';
-      document.getElementById('wtat-extra').style.display = 'none';
-      document.getElementById('ternary-extra').style.display = 'none';
-
-      /* Reset rule cards */
-      ['rule1', 'rule2', 'rule3', 'rule4'].forEach((id, idx) => {
-        const node = document.getElementById(id);
-        node.innerHTML = `Rule ${idx + 1}: Select two elements.`;
-        node.style.borderLeftColor = '#cbd5e1';
-      });
-
-      document.getElementById('phase-tendency').innerHTML = 'Phase tendency will appear here.';
-      document.getElementById('strength-tendency').innerHTML = 'Strengthening trend will appear here.';
-    }
-
-    function resetTable() {
-      solvent = null;
-      solute = null;
-
-      /* Clear selected binary inputs */
-      ['at-val', 'wt-val', 'density-rho1', 'density-rho2', 'temp-input'].forEach(id => {
-        const node = document.getElementById(id);
-        if (node) node.value = '';
-      });
-
-      /* Restore default density composition */
-      const densityC1 = document.getElementById('density-c1');
-      if (densityC1) densityC1.value = '50';
-
-      updateBadges();
-      updateCompositionLabels();
-      syncSelectionStyles();
-      resetResultsOnly();
-      drawHallChart();
-    }
-
-    /*
-      ============================================================
-      PERIODIC TABLE BUILD + SELECTION
-      ============================================================
-    */
-
-    function buildTable() {
-      const table = document.getElementById('table');
-      table.innerHTML = '';
-
-      for (let row = 1; row <= 9; row++) {
-        for (let col = 1; col <= 18; col++) {
-          const el = elementsData.find(e => e.r === row && e.c === col);
-          const div = document.createElement('div');
-          div.style.gridColumn = col;
-          div.style.gridRow = row;
-
-          if (!el) {
-            div.className = 'element empty';
-            table.appendChild(div);
-            continue;
-          }
-
-          div.className = 'element';
-          div.style.backgroundColor = `var(--${el.cat})`;
-          div.dataset.symbol = el.s;
-          div.title = `${el.s} | Radius: ${el.rad} nm | Structure: ${el.str} | EN: ${el.en} | Valency: ${el.v} | AW: ${el.aw}`;
-          div.innerHTML = `<b>${el.s}</b><small>${el.rad} nm</small>`;
-          div.onclick = () => selectElement(el);
-
-          table.appendChild(div);
-        }
-      }
-
-      syncSelectionStyles();
-      populateTernarySelects();
-    }
-
-    function populateTernarySelects() {
-      const defaults = ['Al', 'Si', 'Mg'];
-      ['ternary-e1', 'ternary-e2', 'ternary-e3'].forEach((id, idx) => {
-        const select = document.getElementById(id);
-        if (!select) return;
-
-        select.innerHTML = elementsData
-          .map(el => `<option value="${el.s}">${el.s}</option>`)
-          .join('');
-
-        select.value = defaults[idx];
-      });
-    }
-
-    function selectElement(el) {
-      /* First click = solvent, second click = solute, third click restarts */
-      if (!solvent || (solvent && solute)) {
-        solvent = el;
-        solute = null;
-      } else if (solvent && !solute) {
-        if (solvent.s === el.s) {
-          showInlineMessage('Please choose a different second element.', 'warning');
-          return;
-        }
-        solute = el;
-      }
-
-      syncSelectionStyles();
-      updateBadges();
-      updateCompositionLabels();
-      resetResultsOnly();
-
-      /* Auto-run only where it makes sense */
-      if (currentMode === 'hume' && solvent && solute) {
-        calculateHume();
-      }
-
-      if (['at-wt', 'wt-at', 'density'].includes(currentMode) && solvent && solute) {
-        showInlineMessage(`Selected pair: ${solvent.s} and ${solute.s}`, 'success');
-      }
-    }
-
-    /*
-      ============================================================
-      TAB SWITCHING
-      ============================================================
-    */
-
-    function showCalc(mode) {
-      currentMode = mode;
-
-      document.querySelectorAll('.calc-view').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.sidebar-scroll > div').forEach(el => el.style.display = 'none');
-
-      document.getElementById(`view-${mode}`).classList.add('active');
-      document.getElementById(`btn-${mode}`).classList.add('active');
-      document.getElementById(`theory-${mode}`).style.display = 'block';
-
-      /* Hide periodic table in tabs where it is not needed */
-      const hideTable = ['hall', 'diffusion', 'ternary', 'structures'].includes(mode);
-      document.getElementById('periodic-container').style.display = hideTable ? 'none' : 'block';
-
-      if (mode === 'hall') drawHallChart();
-    }
-
-    /*
-      ============================================================
-      HUME-ROTHERY + EXTRA DESCRIPTORS
-      ============================================================
-    */
-
-    function calculateHume() {
-      if (!solvent || !solute) return;
-
-      const sizeDiff = Math.abs((solute.rad - solvent.rad) / solvent.rad) * 100;
-      const enDiff = Math.abs(solvent.en - solute.en);
-      const avgVEC = (solvent.v + solute.v) / 2;
-      const delta = computeDelta([solvent, solute], [0.5, 0.5]);
-
-      const sizePass = sizeDiff <= 15;
-      const structurePass = solvent.str === solute.str;
-      const enPass = enDiff <= 0.40;
-      const valencyPass = solvent.v === solute.v;
-
-      const score = [sizePass, structurePass, enPass, valencyPass].filter(Boolean).length;
-
-      setRuleCard('rule1', `${sizePass ? '✅' : '❌'} <b>Atomic Size:</b> ${sizeDiff.toFixed(2)}% ${sizePass ? '(within 15%)' : '(above 15%)'}`, sizePass);
-      setRuleCard('rule2', `${structurePass ? '✅' : '❌'} <b>Crystal Structure:</b> ${solvent.str} vs ${solute.str}`, structurePass);
-      setRuleCard('rule3', `${enPass ? '✅' : '❌'} <b>Electronegativity Difference:</b> ${enDiff.toFixed(2)} ${enPass ? '(small)' : '(large)'}`, enPass);
-      setRuleCard('rule4', `${valencyPass ? '✅' : '❌'} <b>Valency:</b> ${solvent.v} vs ${solute.v}`, valencyPass);
-
-      /* Extra descriptor cards */
-      const severity = getSeverity(sizeDiff);
-      document.getElementById('hume-metrics').style.display = 'grid';
-      document.getElementById('metric-mismatch').textContent = `${sizeDiff.toFixed(2)}%`;
-      document.getElementById('metric-severity').innerHTML = `<span class="${severity.cls}">${severity.text}</span>`;
-      document.getElementById('metric-vec').textContent = avgVEC.toFixed(2);
-      document.getElementById('metric-delta').textContent = `${delta.toFixed(2)}%`;
-
-      /* Phase tendency */
-      const phase = getPhaseTendency(score, sizeDiff, enDiff);
-      document.getElementById('phase-tendency').innerHTML = `<span class="phase-badge ${phase.cls}">${phase.label}</span><br>${phase.text}`;
-
-      /* Qualitative strengthening interpretation */
-      document.getElementById('strength-tendency').innerHTML = `<b>Strengthening trend</b><br><br>${getStrengthTendency(sizeDiff, enDiff)}`;
-
-      /* Summary card */
-      const summary = document.getElementById('summary');
-      summary.style.display = 'block';
-
-      let verdict = '';
-      let color = 'var(--danger)';
-      if (score === 4) {
-        verdict = 'EXCELLENT SOLID SOLUBILITY';
-        color = 'var(--success)';
-      } else if (score >= 2) {
-        verdict = 'LIMITED / MODERATE SOLUBILITY';
-        color = 'var(--warning)';
-      } else {
-        verdict = 'POOR SUBSTITUTIONAL COMPATIBILITY';
-      }
-
-      summary.style.borderTop = `5px solid ${color}`;
-      summary.innerHTML = `${verdict}<small>Score: ${score}/4 | Pair: ${solvent.s} and ${solute.s} based on simplified Hume-Rothery screening, size-misfit, and electronic descriptors.</small>`;
-
-      /* Pair details */
-      document.getElementById('pair-meta').style.display = 'grid';
-      document.getElementById('solvent-meta').innerHTML = `<b>Solvent: ${solvent.s}</b><br>Radius: ${solvent.rad} nm<br>Structure: ${solvent.str}<br>EN: ${solvent.en}<br>Valency: ${solvent.v}<br>Atomic wt: ${solvent.aw}`;
-      document.getElementById('solute-meta').innerHTML = `<b>Solute: ${solute.s}</b><br>Radius: ${solute.rad} nm<br>Structure: ${solute.str}<br>EN: ${solute.en}<br>Valency: ${solute.v}<br>Atomic wt: ${solute.aw}`;
-
-      /* Temperature note */
-      const tempC = parseFloat(document.getElementById('temp-input').value);
-      const notes = [getTemperatureNote(solvent, tempC), getTemperatureNote(solute, tempC)].filter(Boolean);
-      const tempNode = document.getElementById('temp-note');
-
-      if (notes.length) {
-        tempNode.style.display = 'block';
-        tempNode.style.borderTop = '5px solid var(--purple)';
-        tempNode.innerHTML = `Temperature-aware phase note<small>${notes.join(' ')}</small>`;
-      } else {
-        tempNode.style.display = 'none';
-      }
-    }
-
-    /*
-      ============================================================
-      HALL-PETCH
-      ============================================================
-    */
-
-    function calculateHallPetch() {
-      const sigma0 = parseFloat(document.getElementById('hp-sigma').value);
-      const k = parseFloat(document.getElementById('hp-k').value);
-      const d = parseFloat(document.getElementById('hp-d').value);
-      const out = document.getElementById('hp-result');
-
-      if ([sigma0, k, d].some(v => Number.isNaN(v))) {
-        out.style.display = 'block';
-        out.textContent = 'Please fill all Hall-Petch inputs.';
-        return;
-      }
-
-      if (d <= 0) {
-        out.style.display = 'block';
-        out.textContent = 'Grain size must be greater than zero.';
-        return;
-      }
-
-      const sigmaY = sigma0 + (k / Math.sqrt(d));
-      out.style.display = 'block';
-      out.innerHTML = `Yield Strength: ${sigmaY.toFixed(3)} MPa<br><span style="font-size:12px; font-weight:600; color:#4b5563;">Using σy = σ0 + ky / √d</span>`;
-
-      drawHallChart(sigma0, k, d);
-    }
-
-    function drawHallChart(sigma0 = 70, k = 0.74, selectedD = null) {
-      const canvas = document.getElementById('hall-chart');
-      if (!canvas) return;
-
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-      const pad = 50;
-
-      /* Representative grain sizes */
-      const grainSizes = [1, 2, 4, 8, 16, 32, 64, 128, 256];
-      const strengths = grainSizes.map(d => sigma0 + (k / Math.sqrt(d)));
-
-      const yMin = Math.min(...strengths) - 1;
-      const yMax = Math.max(...strengths) + 1;
-
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = '#fbfdff';
-      ctx.fillRect(0, 0, w, h);
-
-      /* Axes */
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(pad, pad / 2);
-      ctx.lineTo(pad, h - pad);
-      ctx.lineTo(w - pad / 2, h - pad);
-      ctx.stroke();
-
-      ctx.fillStyle = '#64748b';
-      ctx.font = '12px Segoe UI';
-      ctx.fillText('Yield Strength (MPa)', 10, 20);
-      ctx.fillText('Grain size d (μm)', w - 130, h - 12);
-
-      /* Curve */
-      ctx.strokeStyle = '#0d6efd';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      grainSizes.forEach((d, i) => {
-        const x = pad + (i / (grainSizes.length - 1)) * (w - 2 * pad);
-        const y = h - pad - ((strengths[i] - yMin) / (yMax - yMin)) * (h - 1.8 * pad);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-
-      /* Data points and x labels */
-      grainSizes.forEach((d, i) => {
-        const x = pad + (i / (grainSizes.length - 1)) * (w - 2 * pad);
-        const y = h - pad - ((strengths[i] - yMin) / (yMax - yMin)) * (h - 1.8 * pad);
-
-        ctx.fillStyle = '#0d6efd';
-        ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#475569';
-        ctx.fillText(String(d), x - 8, h - pad + 18);
-      });
-
-      /* Selected point */
-      if (selectedD && selectedD > 0) {
-        const selectedY = sigma0 + (k / Math.sqrt(selectedD));
-        const logMin = Math.log2(grainSizes[0]);
-        const logMax = Math.log2(grainSizes[grainSizes.length - 1]);
-        const x = pad + ((Math.log2(selectedD) - logMin) / (logMax - logMin)) * (w - 2 * pad);
-        const clampedX = Math.max(pad, Math.min(w - pad, x));
-        const y = h - pad - ((selectedY - yMin) / (yMax - yMin)) * (h - 1.8 * pad);
-
-        ctx.fillStyle = '#dc3545';
-        ctx.beginPath();
-        ctx.arc(clampedX, y, 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillText(`Selected: d=${selectedD}`, clampedX + 8, y - 8);
-      }
-    }
-
-    /*
-      ============================================================
-      BINARY COMPOSITION CONVERTERS
-      ============================================================
-    */
-
-    function calcAtWt() {
-      const result = document.getElementById('atwt-result');
-
-      if (!solvent || !solute) {
-        result.style.display = 'block';
-        result.textContent = 'Please select two elements first.';
-        return;
-      }
-
-      const atomicPercent1 = parseFloat(document.getElementById('at-val').value);
-      if (Number.isNaN(atomicPercent1) || atomicPercent1 < 0 || atomicPercent1 > 100) {
-        result.style.display = 'block';
-        result.textContent = 'Enter a valid atomic % between 0 and 100.';
-        return;
-      }
-
-      const x1 = atomicPercent1 / 100;
-      const x2 = 1 - x1;
-      const avgAtomicWeight = x1 * solvent.aw + x2 * solute.aw;
-      const w1 = (x1 * solvent.aw / avgAtomicWeight) * 100;
-      const w2 = 100 - w1;
-
-      result.style.display = 'block';
-      result.innerHTML = `${solvent.s}: ${w1.toFixed(2)} wt%<br>${solute.s}: ${w2.toFixed(2)} wt%`;
-
-      document.getElementById('atwt-extra').style.display = 'grid';
-      document.getElementById('atwt-aaw').textContent = avgAtomicWeight.toFixed(3);
-      document.getElementById('atwt-mole').textContent = x1.toFixed(4);
-      document.getElementById('atwt-mass').textContent = (w1 / 100).toFixed(4);
-    }
-
-    function calcWtAt() {
-      const result = document.getElementById('wtat-result');
-
-      if (!solvent || !solute) {
-        result.style.display = 'block';
-        result.textContent = 'Please select two elements first.';
-        return;
-      }
-
-      const weightPercent1 = parseFloat(document.getElementById('wt-val').value);
-      if (Number.isNaN(weightPercent1) || weightPercent1 < 0 || weightPercent1 > 100) {
-        result.style.display = 'block';
-        result.textContent = 'Enter a valid weight % between 0 and 100.';
-        return;
-      }
-
-      const wf1 = weightPercent1 / 100;
-      const wf2 = 1 - wf1;
-      const n1 = wf1 / solvent.aw;
-      const n2 = wf2 / solute.aw;
-      const x1 = n1 / (n1 + n2);
-      const x2 = 1 - x1;
-      const avgAtomicWeight = x1 * solvent.aw + x2 * solute.aw;
-
-      result.style.display = 'block';
-      result.innerHTML = `${solvent.s}: ${(x1 * 100).toFixed(2)} at%<br>${solute.s}: ${(x2 * 100).toFixed(2)} at%`;
-
-      document.getElementById('wtat-extra').style.display = 'grid';
-      document.getElementById('wtat-aaw').textContent = avgAtomicWeight.toFixed(3);
-      document.getElementById('wtat-mole').textContent = x1.toFixed(4);
-      document.getElementById('wtat-mass').textContent = wf1.toFixed(4);
-    }
-
-    /*
-      ============================================================
-      DENSITY / ARRHENIUS / TERNARY
-      ============================================================
-    */
-
-    function calculateDensity() {
-      const result = document.getElementById('density-result');
-
-      if (!solvent || !solute) {
-        result.style.display = 'block';
-        result.textContent = 'Select two elements from the table first.';
-        return;
-      }
-
-      const c1 = parseFloat(document.getElementById('density-c1').value);
-      const rho1 = parseFloat(document.getElementById('density-rho1').value);
-      const rho2 = parseFloat(document.getElementById('density-rho2').value);
-
-      if ([c1, rho1, rho2].some(v => Number.isNaN(v)) || c1 < 0 || c1 > 100 || rho1 <= 0 || rho2 <= 0) {
-        result.style.display = 'block';
-        result.textContent = 'Enter valid composition and density inputs.';
-        return;
-      }
-
-      const w1 = c1 / 100;
-      const w2 = 1 - w1;
-      const rhoMix = 1 / ((w1 / rho1) + (w2 / rho2));
-
-      result.style.display = 'block';
-      result.innerHTML = `${solvent.s}-${solute.s} estimated density: ${rhoMix.toFixed(4)} g/cm³<br><span style="font-size:12px; font-weight:600; color:#4b5563;">Using inverse rule of mixtures.</span>`;
-    }
-
-    function calculateDiffusion() {
-      const d0 = parseFloat(document.getElementById('diff-d0').value);
-      const q = parseFloat(document.getElementById('diff-q').value);
-      const t = parseFloat(document.getElementById('diff-t').value);
-      const out = document.getElementById('diff-result');
-
-      if ([d0, q, t].some(v => Number.isNaN(v)) || d0 <= 0 || q <= 0 || t <= 0) {
-        out.style.display = 'block';
-        out.textContent = 'Please enter valid positive diffusion inputs.';
-        return;
-      }
-
-      const D = d0 * Math.exp(-q / (R_GAS * t));
-      out.style.display = 'block';
-      out.innerHTML = `Diffusion coefficient D = ${D.toExponential(4)} m²/s<br><span style="font-size:12px; font-weight:600; color:#4b5563;">Arrhenius relation applied at ${t} K</span>`;
-    }
-
-    function calculateTernary() {
-      const e1 = getElementBySymbol(document.getElementById('ternary-e1').value);
-      const e2 = getElementBySymbol(document.getElementById('ternary-e2').value);
-      const e3 = getElementBySymbol(document.getElementById('ternary-e3').value);
-
-      const c1 = parseFloat(document.getElementById('ternary-c1').value);
-      const c2 = parseFloat(document.getElementById('ternary-c2').value);
-      const c3 = parseFloat(document.getElementById('ternary-c3').value);
-      const result = document.getElementById('ternary-result');
-
-      if (!e1 || !e2 || !e3 || [c1, c2, c3].some(v => Number.isNaN(v) || v < 0)) {
-        result.style.display = 'block';
-        result.textContent = 'Choose three elements and valid atomic percentages.';
-        return;
-      }
-
-      const sum = c1 + c2 + c3;
-      if (sum <= 0) {
-        result.style.display = 'block';
-        result.textContent = 'Atomic percentages must sum to a positive value.';
-        return;
-      }
-
-      /* Normalize in case user does not enter exactly 100 */
-      const x1 = c1 / sum;
-      const x2 = c2 / sum;
-      const x3 = c3 / sum;
-
-      const avgAtomicWeight = x1 * e1.aw + x2 * e2.aw + x3 * e3.aw;
-      const w1 = (x1 * e1.aw / avgAtomicWeight) * 100;
-      const w2 = (x2 * e2.aw / avgAtomicWeight) * 100;
-      const w3 = 100 - w1 - w2;
-      const vec = x1 * e1.v + x2 * e2.v + x3 * e3.v;
-      const delta = computeDelta([e1, e2, e3], [x1, x2, x3]);
-
-      result.style.display = 'block';
-      result.innerHTML = `${e1.s}: ${w1.toFixed(2)} wt% | ${e2.s}: ${w2.toFixed(2)} wt% | ${e3.s}: ${w3.toFixed(2)} wt%`;
-
-      document.getElementById('ternary-extra').style.display = 'grid';
-      document.getElementById('ternary-aaw').textContent = avgAtomicWeight.toFixed(3);
-      document.getElementById('ternary-vec').textContent = vec.toFixed(3);
-      document.getElementById('ternary-delta').textContent = `${delta.toFixed(3)}%`;
-    }
-
-    /*
-      ============================================================
-      STARTUP
-      ============================================================
-    */
-
-    buildTable();
-    updateBadges();
-    updateCompositionLabels();
-    resetResultsOnly();
-    drawHallChart();
-  </script>
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/calculators.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
