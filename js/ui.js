@@ -1,9 +1,17 @@
 function updateBadges() {
   const solventBadge = document.getElementById("solvent-badge");
   const soluteBadge = document.getElementById("solute-badge");
+  const explorerBadge = document.getElementById("explorer-badge");
 
   if (solventBadge) solventBadge.textContent = `Solvent: ${solvent ? solvent.s : "—"}`;
   if (soluteBadge) soluteBadge.textContent = `Solute: ${solute ? solute.s : "—"}`;
+  if (explorerBadge) {
+    if (currentMode === "explorer" && solvent) {
+      explorerBadge.textContent = `Explorer: ${solvent.s}`;
+    } else {
+      explorerBadge.textContent = "Explorer: —";
+    }
+  }
 }
 
 function updateCompositionLabels() {
@@ -22,7 +30,7 @@ function syncSelectionStyles() {
       node.classList.add("solvent");
     }
 
-    if (solute && node.dataset.symbol === solute.s) {
+    if (solute && node.dataset.symbol === solute.s && currentMode !== "explorer") {
       node.classList.add("solute");
     }
   });
@@ -99,6 +107,21 @@ function resetResultsOnly() {
   if (strength) strength.innerHTML = "Strengthening trend will appear here.";
 }
 
+function resetExplorerPanel() {
+  const emptyNode = document.getElementById("explorer-empty");
+  const propertiesNode = document.getElementById("explorer-properties");
+  const structureVisual = document.getElementById("structure-visual");
+  const structureInfo = document.getElementById("structure-info");
+
+  if (emptyNode) emptyNode.style.display = "block";
+  if (propertiesNode) {
+    propertiesNode.style.display = "none";
+    propertiesNode.innerHTML = "";
+  }
+  if (structureVisual) structureVisual.innerHTML = "Select an element to view its structure.";
+  if (structureInfo) structureInfo.innerHTML = "Structure notes will appear here.";
+}
+
 function resetTable() {
   solvent = null;
   solute = null;
@@ -115,6 +138,7 @@ function resetTable() {
   updateCompositionLabels();
   syncSelectionStyles();
   resetResultsOnly();
+  resetExplorerPanel();
 
   if (typeof drawHallChart === "function") {
     drawHallChart();
@@ -122,6 +146,16 @@ function resetTable() {
 }
 
 function selectElement(el) {
+  if (currentMode === "explorer") {
+    solvent = el;
+    solute = null;
+    syncSelectionStyles();
+    updateBadges();
+    updateCompositionLabels();
+    showElementExplorer(el);
+    return;
+  }
+
   if (!solvent || (solvent && solute)) {
     solvent = el;
     solute = null;
@@ -223,5 +257,9 @@ function showCalc(mode) {
 
   if (mode === "hall" && typeof drawHallChart === "function") {
     drawHallChart();
+  }
+
+  if (mode !== "explorer") {
+    updateBadges();
   }
 }
