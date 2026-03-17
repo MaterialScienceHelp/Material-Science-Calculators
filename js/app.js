@@ -4,17 +4,34 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBadges();
   updateCompositionLabels();
   resetResultsOnly();
-  drawHallChart();
+  resetExplorerPanel();
+
+  if (typeof drawHallChart === "function") {
+    drawHallChart();
+  }
 
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => showCalc(btn.dataset.mode));
   });
 
-  document.getElementById("reset-selection-btn").addEventListener("click", resetTable);
-  document.getElementById("hall-btn").addEventListener("click", calculateHallPetch);
-  document.getElementById("atwt-btn").addEventListener("click", calcAtWt);
-  document.getElementById("wtat-btn").addEventListener("click", calcWtAt);
-  document.getElementById("density-btn").addEventListener("click", calculateDensity);
-  document.getElementById("diffusion-btn").addEventListener("click", calculateDiffusion);
-  document.getElementById("ternary-btn").addEventListener("click", calculateTernary);
+  const resetBtn = document.getElementById("reset-selection-btn");
+  if (resetBtn) resetBtn.addEventListener("click", resetTable);
+
+  const hallBtn = document.getElementById("hall-btn");
+  if (hallBtn) hallBtn.addEventListener("click", calculateHallPetch);
+
+  const atwtBtn = document.getElementById("atwt-btn");
+  if (atwtBtn) atwtBtn.addEventListener("click", calcAtWt);
+
+  const wtatBtn = document.getElementById("wtat-btn");
+  if (wtatBtn) wtatBtn.addEventListener("click", calcWtAt);
+
+  const densityBtn = document.getElementById("density-btn");
+  if (densityBtn) densityBtn.addEventListener("click", calculateDensity);
+
+  const diffusionBtn = document.getElementById("diffusion-btn");
+  if (diffusionBtn) diffusionBtn.addEventListener("click", calculateDiffusion);
+
+  const ternaryBtn = document.getElementById("ternary-btn");
+  if (ternaryBtn) ternaryBtn.addEventListener("click", calculateTernary);
 });
